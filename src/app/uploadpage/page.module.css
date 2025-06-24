@@ -1,0 +1,36 @@
+
+    @media only screen and (max-width: 767px) {
+        .uploadedImagesSmall {
+           align-items: center;
+           display: grid;
+           grid-template-columns: repeat(4, 1fr);
+           gap: 10px; /* Adjust the gap between images as needed */
+           
+        }
+       }
+       
+       /* Desktop layout */
+       @media only screen and (min-width: 768px) {
+        .uploadedImagesSmall {
+           display: grid;
+           grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+           gap: 10px; /* Adjust the gap between images as needed */
+        }
+       }
+
+.imagesContainer {
+    width: 100%;
+    position: relative;
+    padding-top: 100%; /* This maintains the aspect ratio */
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+   }
+   
+   .image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Adjusts the image to fill the container while maintaining its aspect ratio */
+   
+  }

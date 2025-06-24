@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import styles from "./NavbarBottom.module.css"; // Adjust the path as necessary
+import styles from "./navbarBottom.module.css"; // Adjust the path as necessary
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaHome, FaUsers, FaHeart, FaCloudUploadAlt } from "react-icons/fa";
