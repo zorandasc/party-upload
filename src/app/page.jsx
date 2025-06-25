@@ -4,6 +4,7 @@ import { getAllImagesFromUploadThing } from "@/lib/images";
 
 const HomePage = async () => {
   const images = await getAllImagesFromUploadThing();
+
   return <ImagesContainer images={images} />;
 };
 

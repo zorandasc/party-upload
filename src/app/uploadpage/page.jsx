@@ -10,6 +10,7 @@ const UploadPage = () => {
 
   //PRESENT USER UPLODADED IMAGES
   const handleOnUploadComplete = (res) => {
+
     alert("Upload Completed");
     const newImages = res?.map(({ customId, key, name, ufsUrl }) => {
       return {

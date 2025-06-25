@@ -15,12 +15,12 @@ const ImagesContainer = ({ images }) => {
             <div key={i} className={styles.imageContainer}>
               <Image
                 priority
-                src={`https://utfs.io/f/${item.key}`}
+                src={`https://${process.env.UPLOADTHING_APP_ID}.ufs.sh/f/${item.key}`}
                 alt="Image"
                 layout="fill"
                 className={styles.image}
                 sizes="100%"
-                blurDataURL={`https://utfs.io/f/${item.key}`}
+                blurDataURL={`https://${process.env.UPLOADTHING_APP_ID}.ufs.sh/f/${item.key}`}
                 placeholder="blur"
               />
             </div>

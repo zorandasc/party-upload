@@ -1,19 +1,44 @@
 # DA BI APLIKACIJA RADILA MORA POSTOJATI TOKEN U .env
 
-UPLOADTHING_TOKEN=
+# UPLOADTHING_TOKEN=
 
 # KOJI SE INACE NIGDJE DIREKNTO NE REFERNCIRA U KODU ALI MORA POSTOJATI
 
-# .env VARIJABLA UPLOADTHING_API_KEY=, SE INACE KORISTI
+# UPLOADTHING_API_KEY=,
 
-# U API REQUESTU, NPR. ZA DOBAVLJANJE SLIKA:
+# SE INACE KORISTI U POST API REQUESTU, NPR. ZA DOBAVLJANJE ILI BRISANJE SLIKA:
 
-# u /lib/images.js:
+# UPLOADTHING_APP_ID=
+
+# SE KORISTI KAO DIO URL ZA DOBAVLJANJE SLIKA
+
+# -------------------------------------
+
+# DOBAVLJANE SLIKA
+
+# -------------------------------------
+
+# IZ DOKUMENTACIJE
+
+# https://docs.uploadthing.com/working-with-files#accessing-public-files
+
+# UploadThing serves all files from a CDN at the following URL pattern:
+
+# https://<APP_ID>.ufs.sh/f/<FILE_KEY>
+
+# HOME PAGE page.jsx JE SERVER KOMPONENTA I DOBAVLJA SVE SLIKE SA getAllImagesFromUploadThing() FUKCIJOM
 
 ```javascript
-const UPLOADTHING_API_KEY = process.env.UPLOADTHING_API_KEY;
+const HomePage = async () => {
+  const images = await getAllImagesFromUploadThing();
+  console.log("Fetched images:", images);
+  return <ImagesContainer images={images} />;
+};
+```
 
-//GET ALL IMAGES FROM UPLOADTHING
+# TA FUNKCIJE JE DEDINISANA U /lib/images.js
+
+```javascript
 export async function getAllImagesFromUploadThing() {
   try {
     const res = await fetch("https://api.uploadthing.com/v6/listFiles", {
@@ -24,6 +49,42 @@ export async function getAllImagesFromUploadThing() {
       },
       body: JSON.stringify({ limit: 100, offset: 0 }),
     });
+```
+
+# OVA FUNKCIJA VRACA ARRAY ELEMENTA U OBLIKU:
+
+```
+customId
+id
+key
+name
+size
+status
+uploadedAt
+
+```
+
+# SLIKE SE U HOMNE PAGE PREDSTAVLJAJU SA /components/ImageContainer.jsx KOMPONENTOM
+
+# U ImageContainer.jsx SLIKE SE PREDSTAVLJAJU SA
+
+# src={`https://${process.env.UPLOADTHING_APP_ID}.ufs.sh/f/${item.key}`}
+
+```javascript
+
+{images?.map((item, i) => (
+            <div key={i} className={styles.imageContainer}>
+              <Image
+                priority
+                src={`https://${process.env.UPLOADTHING_APP_ID}.ufs.sh/f/${item.key}`}
+                alt="Image"
+                layout="fill"
+                className={styles.image}
+                sizes="100%"
+                blurDataURL={`https://${process.env.UPLOADTHING_APP_ID}.ufs.sh/f/${item.key}`}
+                placeholder="blur"
+              />
+            </div>
 
 ```
 
@@ -82,14 +143,14 @@ const UploadDrop = ({ handleOnUploadComplete, handleBeforeUpload }) => {
 
 # IZABRANE SLIKE SE PRVO KOMPRESUJU UNUTAR BROWSERA A ONDA:
 
-# 2. UPLOADDROP ZONE KOMPONENTA KONTAKTIRA SERVER ROUTU PREKO ourFileRouter :
+# 2. UPLOADDROP ZONE KOMPONENTA KONTAKTIRA SERVER ROUTU PREKO endpoint="multipleImageUploader"
 
-# TA SERVER RUTA JE DEFINISANA NA:
+# TA SERVER RUTA JE DEFINISANA NA KAO UPLOADTHING ourFileRoute:
 
 # /api/uploadthing/core.ts
 
 ```javascript
-FileRouter for your app, can contain multiple FileRoutes
+// FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   multipleImageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 4} })
     // Set permissions and file types for this FileRoute
@@ -115,11 +176,9 @@ export const ourFileRouter = {
 
 ```
 
-# 3. NAKON UPLOADA SLIKA NA uploadthing.com, uploadthing.com POZIVA NAS NEXT.JS SERVER
+# 3. NAKON UPLOADA SLIKA NA uploadthing.com PREKO ourFileRouter,
 
-# NA NASEM SERVERU U OKVIRU # /api/uploadthing/core.tsN
-
-# SA FUNKCIJOM:
+# uploadthing.com POZIVA NAS NEXT.JS SERVER, ODNOSNO ourFileRouter FUNKCIJU:
 
 `.onUploadComplete(async ({ metadata, file }) => {`
 
@@ -127,6 +186,40 @@ export const ourFileRouter = {
 
 # DEFINISANA KAO HANDLER UNUTURA DROPZONE CLIJENT COMPONENTE (UploadDrop.jsx):
 
-`  onClientUploadComplete={handleOnUploadComplete}`
+```javascript
+ <UploadDropzone>
+      onClientUploadComplete={handleOnUploadComplete}
+```
 
-# 5. KOJA PREDSTAVI KORISNIKU UPLODOVANE SLIKE
+# onClientUploadComplete() DOBIJA ARRAY OBIJEKATA SA SLIJEDECIM PROPERTIJIMA:
+
+```javascript
+appUrl
+customId
+fileHash
+key
+lastModified
+name
+serverData
+size
+type
+ufsUrl:"https://4uqx22qha3.ufs.sh/f/1VND70WDq5UAsMgiApNz5fb2yKv817Ehkm0YJ6rnceRFpuiL"
+url:"https://utfs.io/f/1VND70WDq5UAsMgiApNz5fb2yKv817Ehkm0YJ6rnceRFpuiL"
+```
+
+# 5. KOJA ZATIM MI PREDSTAVI KORISNIKU KAO SLIKE KOJE JE GOST UPLODOVOVAO
+
+# SA:
+
+```javascript
+<Image
+  priority
+  src={item.ufsUrl}
+  blurDataURL={item.ufsUrl}
+  placeholder="blur"
+  alt="image"
+  layout="fill"
+  sizes="100%"
+  className={styles.image}
+></Image>
+```
