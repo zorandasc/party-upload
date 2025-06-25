@@ -1,36 +1,82 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ 
+  gap: 2rem;
+  font-family: "Segoe UI", sans-serif;
 
-@media only screen and (max-width: 767px) {
-        .uploadedImagesSmall {
-           align-items: center;
-           display: grid;
-           grid-template-columns: repeat(4, 1fr);
-           gap: 10px; /* Adjust the gap between images as needed */
-           
-        }
-       }
-       
-       /* Desktop layout */
-@media only screen and (min-width: 768px) {
-        .uploadedImagesSmall {
-           display: grid;
-           grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-           gap: 10px; /* Adjust the gap between images as needed */
-        }
-       }
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.uploadedImagesSmall {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  max-width: 1000px;
+}
 
 .imagesContainer {
-    width: 100%;
-    position: relative;
-    padding-top: 100%; /* This maintains the aspect ratio */
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
-   }
-   
-   .image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Adjusts the image to fill the container while maintaining its aspect ratio */
-   
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.uploadForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.uploadLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgb(75 85 99);
+}
+
+.uploadForm input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.uploadForm input:focus {
+  border-color: #0070f3;
+  box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.1);
+}
+
+
+@media (max-width: 600px) {
+  .imagesContainer {
+    width: 100px;
+    height: 100px;
   }
+
+ 
+
+  .uploadForm input {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+}

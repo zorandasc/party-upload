@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import imageCompression from "browser-image-compression";
 import UploadDrop from "@/components/UploadDrop";
 import styles from "./page.module.css";
@@ -8,6 +8,13 @@ import styles from "./page.module.css";
 const UploadPage = () => {
   const [images, setImages] = useState([]);
   const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const storedImages = localStorage.getItem("uploadedImages");
+    if (storedImages) {
+      setImages(JSON.parse(storedImages));
+    }
+  }, []);
 
   //PRESENT USER UPLODADED IMAGES
   const handleOnUploadComplete = (res) => {
@@ -21,7 +28,13 @@ const UploadPage = () => {
         ufsUrl,
       };
     });
-    setImages([...newImages, ...images]);
+
+    const updatedImages = [...newImages, ...images];
+
+    setImages(updatedImages);
+
+    // Save to localStorage
+    localStorage.setItem("uploadedImages", JSON.stringify(updatedImages));
   };
 
   // COMPRES EACH FILE BEFORE UPLOADING
@@ -46,11 +59,11 @@ const UploadPage = () => {
   //THIS WILL INCLUDE username TO INPUT
   //WHEN UploadDROP SEND REQUEST TO SERVER
   const inputForUploadthing = {
-    userName: userName || "Anonymous",
+    userName: userName || "Gost",
   };
 
   return (
-    <>
+    <div className={styles.pageContainer}>
       <section className={styles.uploadedImagesSmall}>
         {images?.map((item, i) => (
           // Display each uploaded image
@@ -69,7 +82,7 @@ const UploadPage = () => {
         ))}
       </section>
       <form className={styles.uploadForm}>
-        <label className={styles.uploadLabel}>Unesite vaše ime</label>
+        <label className={styles.uploadLabel}>Unesite vaše ime (Opciono)</label>
         <input
           placeholder="Vaše ime"
           value={userName}
@@ -83,7 +96,7 @@ const UploadPage = () => {
         handleOnUploadComplete={handleOnUploadComplete}
         inputData={inputForUploadthing}
       ></UploadDrop>
-    </>
+    </div>
   );
 };
 export default UploadPage;

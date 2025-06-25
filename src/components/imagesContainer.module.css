@@ -5,8 +5,11 @@
 .imageContainer {
     width: 100%;
     position: relative;
+    border-radius: 12px;
+    overflow: hidden;
     padding-top: 100%; /* This maintains the aspect ratio */
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+   
    }
    
    .image {

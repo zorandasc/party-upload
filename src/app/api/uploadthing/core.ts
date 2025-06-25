@@ -21,7 +21,7 @@ export const ourFileRouter = {
     .middleware(async (ctx) => {
       const { req, files, input } = ctx;
 
-      const userName = input.userName || "Anonymous2";
+      const userName = input.userName || "Gost";
 
       //DODAJ customId NA SVAKI FILE, KOJI INACE MORA BITI JEDINSTVEN
       const fileOverrides = files.map((file) => {
