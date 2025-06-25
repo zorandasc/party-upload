@@ -1,5 +1,5 @@
 
-    @media only screen and (max-width: 767px) {
+@media only screen and (max-width: 767px) {
         .uploadedImagesSmall {
            align-items: center;
            display: grid;
@@ -10,7 +10,7 @@
        }
        
        /* Desktop layout */
-       @media only screen and (min-width: 768px) {
+@media only screen and (min-width: 768px) {
         .uploadedImagesSmall {
            display: grid;
            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

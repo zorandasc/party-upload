@@ -7,12 +7,13 @@ import styles from "./page.module.css";
 
 const UploadPage = () => {
   const [images, setImages] = useState([]);
+  const [userName, setUserName] = useState("");
 
   //PRESENT USER UPLODADED IMAGES
   const handleOnUploadComplete = (res) => {
-
     alert("Upload Completed");
     const newImages = res?.map(({ customId, key, name, ufsUrl }) => {
+      console.log("Image uploaded:", { customId, key, name, ufsUrl });
       return {
         customId,
         key,
@@ -42,10 +43,17 @@ const UploadPage = () => {
     return compressedFiles;
   };
 
+  //THIS WILL INCLUDE username TO INPUT
+  //WHEN UploadDROP SEND REQUEST TO SERVER
+  const inputForUploadthing = {
+    userName: userName || "Anonymous",
+  };
+
   return (
     <>
       <section className={styles.uploadedImagesSmall}>
         {images?.map((item, i) => (
+          // Display each uploaded image
           <div key={i} className={styles.imagesContainer}>
             <Image
               priority
@@ -60,9 +68,20 @@ const UploadPage = () => {
           </div>
         ))}
       </section>
+      <form className={styles.uploadForm}>
+        <label className={styles.uploadLabel}>Unesite vaše ime</label>
+        <input
+          placeholder="Vaše ime"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+          minLength="2"
+          maxLength="20"
+        />
+      </form>
       <UploadDrop
         handleBeforeUpload={handleBeforeUpload}
         handleOnUploadComplete={handleOnUploadComplete}
+        inputData={inputForUploadthing}
       ></UploadDrop>
     </>
   );
