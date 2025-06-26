@@ -81,12 +81,6 @@ const UploadPage = () => {
           </div>
         ))}
       </section>
-
-      <UploadDrop
-        handleBeforeUpload={handleBeforeUpload}
-        handleOnUploadComplete={handleOnUploadComplete}
-        inputData={inputForUploadthing}
-      ></UploadDrop>
       <form className={styles.uploadForm}>
         <label className={styles.uploadLabel} htmlFor="userName">
           Unesite vaše ime (Opciono)
@@ -101,6 +95,11 @@ const UploadPage = () => {
           style={{ backgroundColor: "rgba(255, 255, 255, 0.7)" }}
         />
       </form>
+      <UploadDrop
+        handleBeforeUpload={handleBeforeUpload}
+        handleOnUploadComplete={handleOnUploadComplete}
+        inputData={inputForUploadthing}
+      ></UploadDrop>
     </div>
   );
 };

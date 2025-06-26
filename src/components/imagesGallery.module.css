@@ -1,0 +1,66 @@
+.paginationControls {
+  position: fixed;
+  bottom: 70px; /* distance from bottom of viewport */
+  left: 70%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(7.1px);
+  -webkit-backdrop-filter: blur(7.1px);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.paginationControls  span{
+color: #fff;
+text-shadow: 1px 1px #373333;
+
+}
+
+.paginationButton{
+  background: none;
+  border: none; 
+}
+.paginationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
+.paginationButton svg{
+  display: block;
+    font-size: 26px;
+    text-decoration: none;
+    border-radius: 5px;
+    color: #fff;
+    transition: all .4s;
+}
+
+.spinnerContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+}
+
+.spinner {
+  width: 68px;
+  height: 68px;
+  border: 6px solid #ccc;
+  border-top: 6px solid #6c9cc6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  background-color: transparent;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

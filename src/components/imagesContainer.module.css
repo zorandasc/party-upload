@@ -9,7 +9,12 @@
     overflow: hidden;
     padding-top: 100%; /* This maintains the aspect ratio */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-   
+    opacity: 0;
+  transform: scale(0.8);
+  visibility: hidden;
+
+  animation: popIn 0.4s ease-out forwards;
+   animation: popIn 0.4s ease-out forwards;
    }
    
    .image {
@@ -41,4 +46,17 @@
      gap: 10px; /* Adjust the gap between images as needed */
   }
  }
-   
+
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+    visibility: hidden;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+}

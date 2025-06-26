@@ -1,10 +1,6 @@
-import ImagesContainer from "@/components/ImagesContainer";
-
-import { getAllImagesFromUploadThing } from "@/lib/images";
-
+import ImageGallery from "@/components/ImageGallery";
 const HomePage = async () => {
-  const images = await getAllImagesFromUploadThing();
-  return <ImagesContainer images={images} />;
+  return <ImageGallery></ImageGallery>;
 };
 
 export default HomePage;
