@@ -3,7 +3,7 @@
   bottom: 70px; /* distance from bottom of viewport */
   left: 70%;
   transform: translateX(-50%);
-  z-index: 1000;
+  z-index: 900;
   background: rgba(255, 255, 255, 0.34);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(7.1px);
