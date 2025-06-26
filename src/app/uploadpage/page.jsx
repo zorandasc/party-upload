@@ -81,21 +81,26 @@ const UploadPage = () => {
           </div>
         ))}
       </section>
-      <form className={styles.uploadForm}>
-        <label className={styles.uploadLabel}>Unesite vaše ime (Opciono)</label>
-        <input
-          placeholder="Vaše ime"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-          minLength="2"
-          maxLength="20"
-        />
-      </form>
+
       <UploadDrop
         handleBeforeUpload={handleBeforeUpload}
         handleOnUploadComplete={handleOnUploadComplete}
         inputData={inputForUploadthing}
       ></UploadDrop>
+      <form className={styles.uploadForm}>
+        <label className={styles.uploadLabel} htmlFor="userName">
+          Unesite vaše ime (Opciono)
+        </label>
+        <input
+          id="userName"
+          placeholder="Vaše ime"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+          minLength="2"
+          maxLength="20"
+          style={{ backgroundColor: "rgba(255, 255, 255, 0.7)" }}
+        />
+      </form>
     </div>
   );
 };

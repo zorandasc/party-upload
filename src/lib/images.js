@@ -2,7 +2,7 @@
 const UPLOADTHING_API_KEY = process.env.UPLOADTHING_API_KEY;
 
 //GET ALL IMAGES FROM UPLOADTHING
-export async function getAllImagesFromUploadThing() {
+export async function getAllImagesFromUploadThing({limit = 10, offset = 0} = { }) {
   try {
     const res = await fetch("https://api.uploadthing.com/v6/listFiles", {
       method: "POST",
@@ -10,7 +10,7 @@ export async function getAllImagesFromUploadThing() {
         "X-Uploadthing-Api-Key": `${UPLOADTHING_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ limit: 100, offset: 0 }),
+      body: JSON.stringify({ limit, offset}),
     });
 
     if (!res.ok)
