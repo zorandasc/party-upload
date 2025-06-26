@@ -83,7 +83,7 @@ const UploadPage = () => {
       </section>
       <form className={styles.uploadForm}>
         <label className={styles.uploadLabel} htmlFor="userName">
-          Unesite vaše ime (Opciono)
+          Unesite Vaše ime (Opciono)
         </label>
         <input
           id="userName"

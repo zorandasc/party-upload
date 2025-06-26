@@ -3,21 +3,29 @@ import styles from "./imagesContainer.module.css";
 import Image from "next/image";
 import ImageModal from "./ImageModal";
 
+function extractFirstName(text) {
+  const parts = text.split('-');
+  return parts[0];
+}
+
 const ImagesContainer = ({ images }) => {
   //FOR MODAL IMAGE
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageInfo, setSelectedImageInfo] = useState(null);
   return (
     <>
       <section className={styles.uploadedImages}>
         {images?.map((item, i) => {
+          
           const imageUrl = `https://${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}.ufs.sh/f/${item.key}`;
+          const user=extractFirstName(item?.customId)
           return (
             <div
               key={i}
               className={styles.imageContainer}
               style={{ animationDelay: `${i * 0.1}s` }}
-              onClick={() => setSelectedImage(imageUrl)}
+              onClick={() =>setSelectedImageInfo({imageUrl, user})}
             >
+              <span className={styles.ribbon}>{user}</span>
               <Image
                 priority
                 src={imageUrl}
@@ -33,8 +41,8 @@ const ImagesContainer = ({ images }) => {
         })}
       </section>
       <ImageModal
-        imageUrl={selectedImage}
-        onClose={() => setSelectedImage(null)}
+        imageInfo={selectedImageInfo}
+        onClose={() => setSelectedImageInfo(null)}
       ></ImageModal>
     </>
   );

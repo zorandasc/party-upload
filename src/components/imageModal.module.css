@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,4 +59,19 @@
   color: #fff;
   z-index: 2;
   cursor: pointer;
+}
+
+.user{
+      position: absolute;
+    top: 50px;
+    left: 12px;
+    font-size: 1.5rem;
+    background: transparent;
+    border: none;
+    color: #fff;
+    z-index: 2;
+    cursor: pointer;
+}
+.user i{
+font-size: 1rem;
 }

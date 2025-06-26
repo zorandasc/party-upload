@@ -34,7 +34,7 @@
      display: grid;
      grid-template-columns: repeat(2, 1fr);
      gap: 10px; /* Adjust the gap between images as needed */
-     
+     padding-bottom: 3rem;
   }
  }
  
@@ -44,6 +44,7 @@
      display: grid;
      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
      gap: 10px; /* Adjust the gap between images as needed */
+     padding-bottom: 3rem;
   }
  }
 
@@ -59,4 +60,20 @@
     opacity: 1;
     visibility: visible;
   }
+}
+
+
+.ribbon {
+    
+    font-size: 14px;
+    padding: 4px;
+    padding-right: 6px;
+    position: absolute;
+    z-index: 1000;
+    top: 12px;
+    text-align: center;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #6c9cc6;
+    color: white;
 }

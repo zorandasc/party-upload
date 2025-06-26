@@ -2,7 +2,7 @@
 .uploadDropZone {
   background: rgba(255, 255, 255, 0.7);
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(200, 200, 200, 0.6);
@@ -16,6 +16,7 @@
   z-index: 1000;
   transition: transform 0.3s ease;
   position: relative;
+  margin-bottom: 2rem;
 }
 
 .uploadDropZone:hover {
