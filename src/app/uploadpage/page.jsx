@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import imageCompression from "browser-image-compression";
 import UploadDrop from "@/components/UploadDrop";
+import toast from "react-hot-toast";
 import styles from "./page.module.css";
 
 const UploadPage = () => {
@@ -18,9 +19,8 @@ const UploadPage = () => {
 
   //PRESENT USER UPLODADED IMAGES
   const handleOnUploadComplete = (res) => {
-    alert("Upload Completed");
+    toast.success("Hvala! Slike su poslane!");
     const newImages = res?.map(({ customId, key, name, ufsUrl }) => {
-      console.log("Image uploaded:", { customId, key, name, ufsUrl });
       return {
         customId,
         key,
