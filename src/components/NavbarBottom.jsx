@@ -3,7 +3,12 @@ import React from "react";
 import styles from "./navbarBottom.module.css"; // Adjust the path as necessary
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaUsers, FaHeart, FaCloudUploadAlt } from "react-icons/fa";
+import {
+  FaHome,
+  FaUsers,
+  FaCloudUploadAlt,
+  FaCloudDownloadAlt,
+} from "react-icons/fa";
 
 const NavbarBottom = () => {
   const pathname = usePathname();
@@ -28,11 +33,11 @@ const NavbarBottom = () => {
         </li>
         <li
           className={`${styles.link} ${
-            pathname === "/likespage" ? styles.active : ""
+            pathname === "/downloadpage" ? styles.active : ""
           }`}
         >
-          <Link href="/likespage">
-            <FaHeart />
+          <Link href="/downloadpage">
+            <FaCloudDownloadAlt />
           </Link>
         </li>
         <li
