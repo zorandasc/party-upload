@@ -35,9 +35,10 @@ const DownloadPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-     
-        <h2 className={styles.ribbon}>Dobavite Arhivu svih slika</h2>
-  
+
+      <div className={styles.ribbon}>
+        <span className={styles.ribbonInside}>Dobavite Vase slike</span>
+      </div>
 
       <ul className={styles.list}>
         {Array.from({ length: zipCount }).map((_, i) => (
