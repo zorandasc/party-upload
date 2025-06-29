@@ -56,7 +56,7 @@ const UploadPage = () => {
     return compressedFiles;
   };
 
-  //THIS WILL INCLUDE username TO INPUT
+  //THIS WILL INCLUDE username TO INPUT for UploadDrop
   //WHEN UploadDROP SEND REQUEST TO SERVER
   const inputForUploadthing = {
     userName: userName || "Gost",

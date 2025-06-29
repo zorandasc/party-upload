@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { FaGift } from "react-icons/fa";
 import styles from "./page.module.css";
 
 const DownloadPage = () => {
@@ -35,7 +36,6 @@ const DownloadPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-
       <div className={styles.ribbon}>
         <span className={styles.ribbonInside}>Dobavite Vase slike</span>
       </div>
@@ -43,12 +43,13 @@ const DownloadPage = () => {
       <ul className={styles.list}>
         {Array.from({ length: zipCount }).map((_, i) => (
           <li key={i} className={styles.listItem}>
+            
             <a
               className={styles.link}
               href={`/api/download-zip?page=${i + 1}`}
               rel="noopener noreferrer"
             >
-              Download ZIP Part {i + 1} ({zipSizes[i]?.toFixed(1) ?? "?"} MB)
+              <FaGift></FaGift> Download ZIP Part {i + 1} ({zipSizes[i]?.toFixed(1) ?? "?"} MB)
             </a>
           </li>
         ))}
