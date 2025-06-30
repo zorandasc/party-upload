@@ -16,8 +16,10 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/",                      // protect root page
-    "/downloadpage",          // protect /downloadpage
+  matcher: [
+    "/homepage", // protect root page
+    "/downloadpage", // protect /downloadpage
     "/api/download-zip/:path*",
-    "/api/images/:path*",],
+    "/api/images/:path*",
+  ],
 };

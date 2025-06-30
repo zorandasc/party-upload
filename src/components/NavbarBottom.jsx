@@ -29,23 +29,23 @@ const NavbarBottom = () => {
   return (
     <nav className={styles.nav}>
       <ul className={styles.menu}>
-        {isLoggedIn && (
+         {isLoggedIn && (
           <li
             className={`${styles.link} ${
-              pathname === "/" ? styles.active : ""
+              pathname === "/homepage" ? styles.active : ""
             }`}
           >
-            <Link href="/">
+            <Link href="/homepage">
               <FaHome />
             </Link>
           </li>
         )}
         <li
           className={`${styles.link} ${
-            pathname === "/userspage" ? styles.active : ""
+            pathname === "/sharedpage" ? styles.active : ""
           }`}
         >
-          <Link href="/userspage">
+          <Link href="/sharedpage">
             <FaUsers />
           </Link>
         </li>
@@ -60,15 +60,16 @@ const NavbarBottom = () => {
             </Link>
           </li>
         )}
+       
         <li
-          className={`${styles.link} ${
-            pathname === "/uploadpage" ? styles.active : ""
-          }`}
+          className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}
         >
-          <Link href="/uploadpage">
+          <Link href="/">
             <FaCloudUploadAlt />
           </Link>
         </li>
+
+        
       </ul>
     </nav>
   );
