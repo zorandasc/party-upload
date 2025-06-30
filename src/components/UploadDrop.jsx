@@ -1,6 +1,6 @@
 "use client";
 import { generateUploadDropzone } from "@uploadthing/react";
-import styles from "./UploadDrop.module.css";
+import styles from "./uploadDrop.module.css";
 
 const UploadDropzone = generateUploadDropzone();
 

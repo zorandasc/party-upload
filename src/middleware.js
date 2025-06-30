@@ -19,7 +19,7 @@ export const config = {
   matcher: [
     "/homepage", // protect root page
     "/downloadpage", // protect /downloadpage
-    "/api/download-zip/:path*",
-    "/api/images/:path*",
+    "/api/download-zip/:path*", //protect api routes
+    "/api/images/:path*", //protect api route
   ],
 };

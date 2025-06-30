@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { FaGift } from "react-icons/fa";
 import styles from "./page.module.css";
+import Ribbon from "@/components/Ribbon";
 
 const DownloadPage = () => {
   const [zipCount, setZipCount] = useState(0);
@@ -36,20 +37,18 @@ const DownloadPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.ribbon}>
-        <span className={styles.ribbonInside}>Dobavite Vase slike</span>
-      </div>
+      <Ribbon text="Dobavite Vaše slike"></Ribbon>
 
       <ul className={styles.list}>
         {Array.from({ length: zipCount }).map((_, i) => (
           <li key={i} className={styles.listItem}>
-            
             <a
               className={styles.link}
               href={`/api/download-zip?page=${i + 1}`}
               rel="noopener noreferrer"
             >
-              <FaGift></FaGift> Download ZIP Part {i + 1} ({zipSizes[i]?.toFixed(1) ?? "?"} MB)
+              <FaGift></FaGift> Download ZIP Part {i + 1} (
+              {zipSizes[i]?.toFixed(1) ?? "?"} MB)
             </a>
           </li>
         ))}

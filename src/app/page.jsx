@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import imageCompression from "browser-image-compression";
 import UploadDrop from "@/components/UploadDrop";
+import Ribbon from "@/components/Ribbon";
 import toast from "react-hot-toast";
 import styles from "./page.module.css";
 
@@ -64,6 +65,7 @@ const UploadPage = () => {
 
   return (
     <div className={styles.pageContainer}>
+      <Ribbon text="Upload Party"></Ribbon>
       <section className={styles.uploadedImagesSmall}>
         {images?.map((item, i) => (
           // Display each uploaded image
