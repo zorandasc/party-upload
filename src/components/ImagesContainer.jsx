@@ -28,7 +28,7 @@ const ImagesContainer = ({ images }) => {
               style={{ animationDelay: `${i * 0.1}s` }}
               onClick={() => setSelectedImageInfo({ imageUrl, user })}
             >
-              <span className={styles.ribbon}>{user}</span>
+              {/*<span className={styles.ribbon}>{user}</span>*/}
               <Image
                 priority
                 src={imageUrl}

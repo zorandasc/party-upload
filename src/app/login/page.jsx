@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Ribbon from "@/components/Ribbon";
 import styles from "./page.module.css";
 
 export default function LoginPage() {
@@ -43,9 +44,7 @@ export default function LoginPage() {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.ribbon}>
-        <span className={styles.ribbonInside}>Dobro došli</span>
-      </div>
+      <Ribbon text="Matalija & Borivoje"></Ribbon>
       <div className={styles.container}>
         <form onSubmit={handleSubmit} className={styles.form}>
           <input

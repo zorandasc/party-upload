@@ -65,7 +65,7 @@ const UploadPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <Ribbon text="Upload Party"></Ribbon>
+      <Ribbon text="Matalija & Borivoje"></Ribbon>
       <section className={styles.uploadedImagesSmall}>
         {images?.map((item, i) => (
           // Display each uploaded image

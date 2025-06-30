@@ -37,7 +37,7 @@ const DownloadPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <Ribbon text="Dobavite Vaše slike"></Ribbon>
+      <Ribbon text="Matalija & Borivoje"></Ribbon>
 
       <ul className={styles.list}>
         {Array.from({ length: zipCount }).map((_, i) => (

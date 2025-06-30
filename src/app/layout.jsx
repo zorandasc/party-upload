@@ -1,17 +1,26 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "@uploadthing/react/styles.css";
 import "./globals.css";
 import NavbarBottom from "@/components/NavbarBottom";
 import { Toaster } from "react-hot-toast";
+import { Lora, Inter, Parisienne } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const parisienne = Parisienne({
+  weight: "400", // Specify weight if available, often '400' for scripts
   subsets: ["latin"],
+  variable: "--font-parisienne",
+  display: "swap", // Optimizes font loading
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const lora = Lora({
   subsets: ["latin"],
+  variable: "--font-lora",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata = {
@@ -22,7 +31,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={` ${parisienne.variable} ${lora.variable} ${inter.variable}`}
+      >
         <main className="main">{children}</main>
         <NavbarBottom></NavbarBottom>
         <Toaster
