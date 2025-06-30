@@ -7,7 +7,7 @@ import Ribbon from "@/components/Ribbon";
 import styles from "./page.module.css";
 
 export default function LoginPage() {
-  const router = useRouter();
+  //const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

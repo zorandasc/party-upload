@@ -21,7 +21,7 @@ export async function POST(req) {
   }
 
   const passwordMatch = await bcrypt.compare(password, user.password);
-  
+
   if (!passwordMatch) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }

@@ -1,5 +1,5 @@
-import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
+import { createUploadthing} from "uploadthing/next";
+//import { UploadThingError } from "uploadthing/server";
 import { UTFiles } from "uploadthing/server";
 import { z } from "zod";
 
@@ -19,7 +19,7 @@ export const ourFileRouter = {
     )
     // This code runs on your server before upload
     .middleware(async (ctx) => {
-      const { req, files, input } = ctx;
+      const { /*req,*/ files, input } = ctx;
 
       const userName = input.userName || "Gost";
 
@@ -35,7 +35,7 @@ export const ourFileRouter = {
       //JA DODADO PRVI PRAMAETAR JE METADADA, DRUGI SU FILES KOJI IDU NA uploadthing.com
       return { userId: userName, [UTFiles]: fileOverrides };
     })
-    .onUploadComplete(async ({ metadata, file }) => {
+    .onUploadComplete(async ({ /*metadata, file*/ }) => {
       // This code RUNS ON YOUR SERVER after upload
       //console.log("metadata", metadata);
       //console.log("file", file);
@@ -43,6 +43,6 @@ export const ourFileRouter = {
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return {};
     }),
-} satisfies FileRouter;
+};
 
-export type OurFileRouter = typeof ourFileRouter;
+export default ourFileRouter;

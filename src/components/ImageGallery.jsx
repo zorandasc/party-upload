@@ -15,16 +15,6 @@ export default function ImageGallery() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const handleRemove = async (key) => {
-    const oldImages = [...images];
-    const updatedImages = images.filter((image) => image.key !== key);
-    //Update the state with the filtered images
-    setImages(updatedImages);
-    //FETCH
-    //CHECK RESPONSE
-    // IF FAILS RETURN OLDiMAGES
-  };
-
   useEffect(() => {
     const fetchImages = async () => {
       setLoading(true);

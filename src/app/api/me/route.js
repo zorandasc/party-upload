@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+
 //OVU RUTU KORISTIMO DA DOBAVIMO USERNAME OD TOKENA
 //DA BI SMO U NAVBARU MOGLI KONDICIONO DA PREDASTAVIMO
 //ODREDJEN LINKOVE, POSTO KORISTIMO HTTPONLY KOJI
@@ -10,12 +12,10 @@ export async function GET(req) {
 
   if (!token) return NextResponse.json({ isLoggedIn: false });
   try {
-    const { payload } = await jwtVerify(
-      token,
-      new TextEncoder().encode(process.env.JWT_SECRET)
-    );
+    const { payload } = await jwtVerify(token, JWT_SECRET);
     return NextResponse.json({ isLoggedIn: true, user: payload });
   } catch (error) {
+    console.log("Something went wrong in /ap/me route:", error);
     return NextResponse.json({ isLoggedIn: false });
   }
 }
