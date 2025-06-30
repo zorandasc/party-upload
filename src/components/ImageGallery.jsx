@@ -4,16 +4,26 @@ import ImagesContainer from "@/components/ImagesContainer";
 import { FaAngleDoubleRight, FaAngleDoubleLeft } from "react-icons/fa";
 import styles from "./imagesGallery.module.css"; // Assuming you have some styles for the gallery
 
-const LIMIT = 10;
+const LIMIT = 20;
 
-//Imagegallery KOMBINUJE IMAGECONTAINER I PAGINACIJU
-//setPage(prev => prev + 1) Only allow user actions
+//Imagegallery KOMBINUJE KOMPONENTU IMAGECONTAINER I PAGINACIJU
+//THIS setPage(prev => prev + 1), MEANS Only allow user actions
 //to update the page.
 export default function ImageGallery() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const handleRemove = async (key) => {
+    const oldImages = [...images];
+    const updatedImages = images.filter((image) => image.key !== key);
+    //Update the state with the filtered images
+    setImages(updatedImages);
+    //FETCH
+    //CHECK RESPONSE
+    // IF FAILS RETURN OLDiMAGES
+  };
 
   useEffect(() => {
     const fetchImages = async () => {
