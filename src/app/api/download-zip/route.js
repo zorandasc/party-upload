@@ -4,7 +4,7 @@ import { getAllImagesFromUploadThing } from "@/lib/images";
 
 const APP_ID = process.env.UPLOADTHING_APP_ID;
 
-const MAX_FILES_PER_ZIP = 10;
+const MAX_FILES_PER_ZIP = 50;
 const MAX_ZIP_SIZE_MB = 100;
 
 function splitIntoChunks(files) {
@@ -41,10 +41,7 @@ export async function GET(req) {
     const page = parseInt(searchParams.get("page") || "1", 10);
 
     //THIS DOVWNLOADS ARRAYS OF OBJCTS, WHER EACH OBJECTS CONTAINS IMAGE URL
-    const { files } = await getAllImagesFromUploadThing({
-      limit: 500,
-      offset: 0,
-    });
+    const { files } = await getAllImagesFromUploadThing();
 
     const chunks = splitIntoChunks(files);
     //IZABERI KOJI CHUNK USER HOCE DA DOWNLOADUJE

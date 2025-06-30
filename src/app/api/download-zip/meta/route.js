@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAllImagesFromUploadThing } from "@/lib/images";
 
-const MAX_FILES_PER_ZIP = 10;
+const MAX_FILES_PER_ZIP = 50;
 const MAX_ZIP_SIZE_MB = 100;
 
 function chunkFiles(files) {
@@ -36,16 +36,14 @@ function chunkFiles(files) {
 }
 
 //OVA API ROUTA VRACA UKUPAN BROJ ZIP FAJLOVA
-//OVU RUTU ZOVE DOWNLOAD PAGE
+//U ZAVISNOSTI OD OGRANCIENHA DEFINISANIH SA:
+//MAX_FILES_PER_ZIP I MAX_ZIP_SIZE_MB
+//OVU RUTU ZOVE DOWNLOAD PAGE USEFFECT
 export async function GET() {
   try {
-    const { files } = await getAllImagesFromUploadThing({
-      limit: 500,
-      offset: 0,
-    });
+    const { files } = await getAllImagesFromUploadThing();
     const chunks = chunkFiles(files);
     const zipSizes = chunks.map((chunk) => parseFloat(chunk.sizeMB.toFixed(2)));
-    console.log("zipsizes", zipSizes)
 
     return NextResponse.json(
       { zipCount: chunks.length, zipSizes },

@@ -84,12 +84,10 @@ const UploadPage = () => {
         ))}
       </section>
       <form className={styles.uploadForm}>
-        <label className={styles.uploadLabel} htmlFor="userName">
-          Unesite Vaše ime (Opciono)
-        </label>
+       
         <input
           id="userName"
-          placeholder="Vaše ime"
+          placeholder="Vaše ime (Opciono)"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
           minLength="2"
