@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./navbarBottom.module.css"; // Adjust the path as necessary
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,16 +12,34 @@ import {
 
 const NavbarBottom = () => {
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/me", { cache: "no-store" });
+        const data = await res.json();
+        setIsLoggedIn(data.isLoggedIn);
+      } catch (error) {
+        console.error("Auth check failed", error);
+      }
+    }
+    checkAuth();
+  }, []);
   return (
     <nav className={styles.nav}>
       <ul className={styles.menu}>
-        <li
-          className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}
-        >
-          <Link href="/">
-            <FaHome />
-          </Link>
-        </li>
+        {isLoggedIn && (
+          <li
+            className={`${styles.link} ${
+              pathname === "/" ? styles.active : ""
+            }`}
+          >
+            <Link href="/">
+              <FaHome />
+            </Link>
+          </li>
+        )}
         <li
           className={`${styles.link} ${
             pathname === "/userspage" ? styles.active : ""
@@ -31,15 +49,17 @@ const NavbarBottom = () => {
             <FaUsers />
           </Link>
         </li>
-        <li
-          className={`${styles.link} ${
-            pathname === "/downloadpage" ? styles.active : ""
-          }`}
-        >
-          <Link href="/downloadpage">
-            <FaCloudDownloadAlt />
-          </Link>
-        </li>
+        {isLoggedIn && (
+          <li
+            className={`${styles.link} ${
+              pathname === "/downloadpage" ? styles.active : ""
+            }`}
+          >
+            <Link href="/downloadpage">
+              <FaCloudDownloadAlt />
+            </Link>
+          </li>
+        )}
         <li
           className={`${styles.link} ${
             pathname === "/uploadpage" ? styles.active : ""

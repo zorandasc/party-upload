@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import styles from "./page.module.css";
@@ -29,8 +29,11 @@ export default function LoginPage() {
         toast.error(error || "Login failed");
         return;
       }
-
-      router.push("/");
+      toast.success("Dobro došli!");
+      //This ensures the whole app (including NavbarBottom) 
+      // remounts and re-fetches /api/me.
+      window.location.href = "/";
+      //router.push("/");
     } catch (err) {
       console.log("Something went wrong", err);
       setError("Something went wrong");
@@ -41,7 +44,7 @@ export default function LoginPage() {
   return (
     <div className={styles.pageContainer}>
       <div className={styles.ribbon}>
-        <span className={styles.ribbonInside}>Dobrodošli</span>
+        <span className={styles.ribbonInside}>Dobro došli</span>
       </div>
       <div className={styles.container}>
         <form onSubmit={handleSubmit} className={styles.form}>
