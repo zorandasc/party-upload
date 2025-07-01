@@ -44,8 +44,10 @@ const UploadPage = () => {
       files.map(async (file) => {
         try {
           const compressedFile = await imageCompression(file, {
-            maxSizeMB: 1, // Maximum file size in MB
-            maxWidthOrHeight: 1920, // Maximum width or height of the image
+            maxSizeMB: 2.5, // Aim below 4MB but keep quality decent
+            maxWidthOrHeight: 1920, // Standard HD resolution is usually enough
+            useWebWorker: true, // Improves performance
+            initialQuality: 0.8,
           });
           return compressedFile;
         } catch (error) {
@@ -84,7 +86,6 @@ const UploadPage = () => {
         ))}
       </section>
       <form className={styles.uploadForm}>
-       
         <input
           id="userName"
           placeholder="Vaše ime (Opciono)"
