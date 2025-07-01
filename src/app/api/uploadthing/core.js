@@ -19,7 +19,7 @@ export const ourFileRouter = {
     )
     // This code runs on your server before upload
     .middleware(async (ctx) => {
-      console.log("INSIDE MIDDLEWARE, ctx", ctx);
+      //console.log("INSIDE MIDDLEWARE, ctx", ctx);
       const { /*req,*/ files, input } = ctx;
 
       const userName = input.userName || "Gost";
