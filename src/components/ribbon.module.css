@@ -47,6 +47,7 @@
     font-size: 18px;
     font-family: var(--font-parisienne);
     letter-spacing: 2px;
+    font-weight: 600;
   }
 
   .ribbonInside::before{
