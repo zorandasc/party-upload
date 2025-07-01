@@ -1,4 +1,4 @@
-import { createUploadthing} from "uploadthing/next";
+import { createUploadthing } from "uploadthing/next";
 //import { UploadThingError } from "uploadthing/server";
 import { UTFiles } from "uploadthing/server";
 import { z } from "zod";
@@ -19,6 +19,7 @@ export const ourFileRouter = {
     )
     // This code runs on your server before upload
     .middleware(async (ctx) => {
+      console.log("INSIDE MIDDLEWARE, ctx", ctx);
       const { /*req,*/ files, input } = ctx;
 
       const userName = input.userName || "Gost";
@@ -35,14 +36,20 @@ export const ourFileRouter = {
       //JA DODADO PRVI PRAMAETAR JE METADADA, DRUGI SU FILES KOJI IDU NA uploadthing.com
       return { userId: userName, [UTFiles]: fileOverrides };
     })
-    .onUploadComplete(async ({ /*metadata, file*/ }) => {
-      // This code RUNS ON YOUR SERVER after upload
-      //console.log("metadata", metadata);
-      //console.log("file", file);
+    .onUploadComplete(
+      async (
+        {
+          /*metadata, file*/
+        }
+      ) => {
+        // This code RUNS ON YOUR SERVER after upload
+        //console.log("metadata", metadata);
+        //console.log("file", file);
 
-      // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return {};
-    }),
+        // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
+        return {};
+      }
+    ),
 };
 
 export default ourFileRouter;
