@@ -21,6 +21,7 @@
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 100;
     width: 100%;
     height: 100%;
     object-fit: cover; /* Adjusts the image to fill the container while maintaining its aspect ratio */
@@ -60,4 +61,20 @@
     opacity: 1;
     visibility: visible;
   }
+}
+
+
+.checkboxs{
+   position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 200;
+      background: transparent;
+      border: none;
+}
+
+.checkboxs input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-left: 0.5rem;
 }

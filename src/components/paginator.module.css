@@ -40,27 +40,3 @@ text-shadow: 1px 1px #373333;
     color: #fff;
     transition: all .4s;
 }
-
-.spinnerContainer {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 999;
-}
-
-.spinner {
-  width: 68px;
-  height: 68px;
-  border: 6px solid #ccc;
-  border-top: 6px solid #6c9cc6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  background-color: transparent;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}

@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import ImagesContainer from "@/components/ImagesContainer";
-import { FaAngleDoubleRight, FaAngleDoubleLeft } from "react-icons/fa";
-import styles from "./imagesGallery.module.css"; // Assuming you have some styles for the gallery
 
-const LIMIT = 20;
+import ImagesContainer from "@/components/ImagesContainer";
+import Paginator from "@/components/Paginator";
+import Spinner from "@/components/Spinner";
+import SideBar from "@/components/SideBar";
+
+const LIMIT = 10;
 
 //Imagegallery KOMBINUJE KOMPONENTU IMAGECONTAINER I PAGINACIJU
 //THIS setPage(prev => prev + 1), MEANS Only allow user actions
@@ -15,6 +17,7 @@ export default function ImageGallery() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
+  const [checkboxMode, setCheckboxMode] = useState(null); // 'trash' | 'share' | null
 
   const totalPages = Math.ceil(totalCount / LIMIT);
 
@@ -39,34 +42,37 @@ export default function ImageGallery() {
     fetchImages();
   }, [page]);
 
+  const handleLeftClick = () => setPage((prev) => Math.max(prev - 1, 0));
+
+  const handleRightClick = () =>
+    setPage((prev) => Math.min(prev + 1, totalPages - 1));
+
+  const handleTrash = () =>
+    setCheckboxMode((prev) => (prev === "trash" ? null : "trash"));
+
+  const handleShare = () =>
+    setCheckboxMode((prev) => (prev === "share" ? null : "share"));
+
   return (
     <>
       {loading ? (
-        <div className={styles.spinnerContainer}>
-          <div className={styles.spinner}></div>
-        </div>
+        <Spinner></Spinner>
       ) : (
-        <ImagesContainer images={images} />
+        <ImagesContainer images={images} checkboxMode={checkboxMode} />
       )}
-      <div className={styles.paginationControls}>
-        <button
-          className={styles.paginationButton}
-          onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
-          disabled={page === 0 || loading}
-        >
-          <FaAngleDoubleLeft />
-        </button>
-        <span style={{ margin: "0 1rem" }}>
-          Page {page + 1} of {totalPages}
-        </span>
-        <button
-          className={styles.paginationButton}
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
-          disabled={!hasMore || loading || page + 1 >= totalPages}
-        >
-          <FaAngleDoubleRight />
-        </button>
-      </div>
+      <SideBar
+        handleTrash={handleTrash}
+        handleShare={handleShare}
+        checkboxMode={checkboxMode}
+      ></SideBar>
+      <Paginator
+        loading={loading}
+        page={page}
+        totalPages={totalPages}
+        hasMore={hasMore}
+        handleLeftClick={handleLeftClick}
+        handleRightClick={handleRightClick}
+      ></Paginator>
     </>
   );
 }
