@@ -15,7 +15,7 @@ export async function GET(req) {
     const { payload } = await jwtVerify(token, JWT_SECRET);
     return NextResponse.json({ isLoggedIn: true, user: payload });
   } catch (error) {
-    console.log("Something went wrong in /ap/me route:", error);
+    //console.log("Something went wrong in /ap/me route:", error);
     return NextResponse.json({ isLoggedIn: false });
   }
 }

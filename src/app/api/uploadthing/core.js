@@ -2,6 +2,7 @@ import { createUploadthing } from "uploadthing/next";
 //import { UploadThingError } from "uploadthing/server";
 import { UTFiles } from "uploadthing/server";
 import { z } from "zod";
+import clientPromise from "@/lib/mongodb";
 
 const f = createUploadthing();
 
@@ -36,20 +37,31 @@ export const ourFileRouter = {
       //JA DODADO PRVI PRAMAETAR JE METADADA, DRUGI SU FILES KOJI IDU NA uploadthing.com
       return { userId: userName, [UTFiles]: fileOverrides };
     })
-    .onUploadComplete(
-      async (
-        {
-          /*metadata, file*/
-        }
-      ) => {
-        // This code RUNS ON YOUR SERVER after upload
-        //console.log("metadata", metadata);
-        //console.log("file", file);
+    // This code RUNS ON YOUR SERVER after upload
+    .onUploadComplete(async ({ metadata, file }) => {
+      try {
+        const client = await clientPromise;
+        const db = client.db("party");
 
-        // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-        return {};
+        const imageDoc = {
+          url: file.ufsUrl,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          key: file.key,
+          customId: file.customId,
+          userId: metadata.userId,
+          uploadedAt: new Date(),
+          public: false,
+        };
+        await db.collection("images").insertOne(imageDoc);
+        console.log("✅ Image metadata saved to DB:", imageDoc);
+      } catch (err) {
+        console.error("❌ Failed to save image metadata:", err);
       }
-    ),
+      // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
+      return {};
+    }),
 };
 
 export default ourFileRouter;

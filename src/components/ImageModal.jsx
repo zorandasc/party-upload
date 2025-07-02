@@ -12,15 +12,20 @@ export default function ImageModal({ imageInfo, onClose }) {
         <button className={styles.closeButton} onClick={onClose}>
           <FaTimes />
         </button>
-        <span className={styles.user}><i>od:</i> {imageInfo.user}</span>
+        <div className={styles.imageInfo}>
+          <span className={styles.user}>
+            <i>Od:</i> {imageInfo.userId}
+          </span>
+          <span className={styles.user}>{imageInfo.uploadedAt}</span>
+        </div>
         <Image
           priority
-          src={imageInfo.imageUrl}
+          src={imageInfo.url}
           alt="Image"
           fill
           sizes="80vw"
           className={styles.modalImage}
-          blurDataURL={imageInfo.imageUrl}
+          blurDataURL={imageInfo.url}
           placeholder="blur"
         />
       </div>

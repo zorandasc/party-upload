@@ -14,9 +14,6 @@ export default function ImageGallery() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
-
-  const totalPages = Math.ceil(totalCount / LIMIT);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -28,7 +25,6 @@ export default function ImageGallery() {
         const data = await res.json();
         setImages(data.files);
         setHasMore(data.hasMore);
-        setTotalCount(data.totalCount);
       } catch (error) {
         console.error("Fetch error:", error);
       } finally {
@@ -56,13 +52,11 @@ export default function ImageGallery() {
         >
           <FaAngleDoubleLeft />
         </button>
-        <span style={{ margin: "0 1rem" }}>
-          Page {page + 1} of {totalPages}
-        </span>
+        <span style={{ margin: "0 1rem" }}>Page {page + 1}</span>
         <button
           className={styles.paginationButton}
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
-          disabled={!hasMore || loading || page + 1 >= totalPages}
+          onClick={() => setPage((prev) => prev + 1)}
+          disabled={!hasMore || loading}
         >
           <FaAngleDoubleRight />
         </button>

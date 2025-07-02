@@ -57,15 +57,17 @@
   background: transparent;
   border: none;
   color: #fff;
-  z-index: 2;
+  z-index: 20;
   cursor: pointer;
 }
 
+.imageInfo{
+  display: flex;
+  flex-direction: column;
+}
+
 .user{
-      position: absolute;
-    top: 50px;
-    left: 12px;
-    font-size: 1.5rem;
+   
     background: transparent;
     border: none;
     color: #fff;
