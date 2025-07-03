@@ -8,8 +8,15 @@ import toast from "react-hot-toast";
 import styles from "./page.module.css";
 
 const UploadPage = () => {
+  //UPLOADED IMAGES
   const [images, setImages] = useState([]);
+  //OPCIONO IME USERA
   const [userName, setUserName] = useState("");
+  //OVAJ KLJUC SE KORISTI DA SE RESETUJE UPLOADDROP
+  //NAKON STO SE DOGODI GRESKA, JER AKO SE NE RESETUJE, OSTANE U GRESCI
+  //React will re-render a component from scratch if its key changes.
+  // You can use that trick to reset the dropzone:
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     const storedImages = localStorage.getItem("uploadedImages");
@@ -18,7 +25,7 @@ const UploadPage = () => {
     }
   }, []);
 
-  //PRESENT USER UPLODADED IMAGES
+  //PRESENT USER UPLODADED IMAGES AKO IH JE IMAO
   const handleOnUploadComplete = (res) => {
     toast.success("Hvala! Slike su poslane!");
     const newImages = res?.map(({ customId, key, name, ufsUrl }) => {
@@ -60,8 +67,33 @@ const UploadPage = () => {
     return compressedFiles;
   };
 
+  //RESET UPLOADROP AKO SE DOGODILA GRESKA
+  const handleUploadError = (error) => {
+    console.error("Upload je propao, sa greskom:", error);
+    setResetKey((prev) => prev + 1); // force reset
+
+    // Default message fallback
+    let message = "Nepoznata greška pri uploadu.";
+
+    // If error is a string
+    if (typeof error === "string") message = error;
+
+    // If error is an object with a message
+    if (typeof error === "object" && error?.message) message = error.message;
+
+    if (message.toLowerCase().includes("filecountmismatch")) {
+      toast.error("Prevelik broj fajlova. Max broj je 4 fajla.");
+    } else if (message.toLowerCase().includes("filesizemismatch")) {
+      toast.error(
+        "Jedan ili više fajlova je prevelik. Max velična jednog fajla je 4MB."
+      );
+    } else {
+      toast.error(message);
+    }
+  };
+
   //THIS WILL INCLUDE username TO INPUT for UploadDrop
-  //WHEN UploadDROP SEND REQUEST TO SERVER
+  //WHEN UploadDROP SEND REQUEST TO SERVER FFOR customID
   const inputForUploadthing = {
     userName: userName || "Gost",
   };
@@ -98,9 +130,11 @@ const UploadPage = () => {
         />
       </form>
       <UploadDrop
+        resetKey={resetKey}
         handleBeforeUpload={handleBeforeUpload}
         handleOnUploadComplete={handleOnUploadComplete}
         inputData={inputForUploadthing}
+        onUploadError={handleUploadError}
       ></UploadDrop>
     </div>
   );
