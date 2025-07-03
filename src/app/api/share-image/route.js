@@ -4,11 +4,11 @@ import { ObjectId } from "mongodb";
 
 export async function POST(req) {
   try {
-    const { imageId } = await req.json();
+    const { imageId, public: newPublicValue } = await req.json();
 
-    if (!imageId) {
+    if (!imageId || typeof newPublicValue !== "boolean") {
       return NextResponse.json(
-        { error: "Image ID is required" },
+        { error: "Image ID and valid 'public' boolean are required" },
         { status: 400 }
       );
     }
@@ -23,16 +23,16 @@ export async function POST(req) {
       return NextResponse.json({ error: "Slika ne postoji." }, { status: 404 });
     }
 
-    if (image.public) {
-      return NextResponse.json(
-        { error: "Slika je vec podijeljena." },
-        { status: 409 } // Conflict
-      );
+    if (image.public === newPublicValue) {
+      return NextResponse.json({
+        success: true,
+        message: `Image already ${newPublicValue ? "shared" : "private"}`,
+      });
     }
 
     const result = await db
       .collection("images")
-      .updateOne({ _id: image._id }, { $set: { public: true } });
+      .updateOne({ _id: image._id }, { $set: { public: newPublicValue } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

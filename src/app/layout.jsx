@@ -43,8 +43,9 @@ export default function RootLayout({ children }) {
             style: {
               background: " rgba(255, 255, 255, 0.34)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-              backdropFilter: "blur(7.1px)",
-              padding: "12px",
+              backdropFilter: "blur(8.1px)",
+              padding: "14px",
+              color:"whitesmoke"
             },
           }}
         />

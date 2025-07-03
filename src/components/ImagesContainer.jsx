@@ -9,33 +9,47 @@ const ImagesContainer = ({ images, checkboxMode }) => {
   //FOR MODAL IMAGE
   const [selectedImageInfo, setSelectedImageInfo] = useState(null);
 
-  const handleImageShare = async (e, item) => {
+  //FOR LOCAL VISULA CHANGE WHEN SHARE CHECKE/ONCHECK
+  //POSTO JE CHECK SAD KONTROLISANA KOMPONENTA
+  const [imageState, setImageStates] = useState(images);
+
+  // Function to toggle share (public) state
+  const handleToggleShare = async (e, item) => {
     e.stopPropagation();
+    const newPublicState = !item.public;
     try {
       const res = await fetch("/api/share-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageId: item._id }),
+        body: JSON.stringify({ imageId: item._id, public: newPublicState }),
       });
 
       const data = await res.json();
+
       if (data.success) {
-        console.log("Image set to public");
-        toast.success("Slika je Podijeljenja", { icon: "👏" });
+        toast.success(
+          newPublicState ? "Slika je podijeljena 👏" : "Slika je sakrivena 🙈"
+        );
+
+        // Update local state for visual feedback
+        setImageStates((prev) =>
+          prev.map((img) =>
+            img._id === item._id ? { ...img, public: newPublicState } : img
+          )
+        );
       } else {
-        console.error("Failed to share image:", data.error);
-        toast.error(data.error);
+        toast.error(data.error || "Greška pri dijeljenju slike");
       }
     } catch (err) {
       console.error("Request error:", err);
-      toast.error("Request error:", err);
+      toast.error("Greška pri komunikaciji sa serverom");
     }
   };
 
   return (
     <>
       <section className={styles.uploadedImages}>
-        {images?.map((item, i) => {
+        {imageState?.map((item, i) => {
           return (
             <div
               key={i}
@@ -57,18 +71,22 @@ const ImagesContainer = ({ images, checkboxMode }) => {
                 <div className={styles.checkboxs}>
                   {checkboxMode === "trash" && (
                     <input
+                      style={{ accentColor: "tomato" }}
                       type="checkbox"
                       id="trash"
                       name="trash"
                       onClick={(e) => e.stopPropagation()}
                     ></input>
                   )}
-                  {!item.public && checkboxMode === "share" && (
+                  {checkboxMode === "share" && (
                     <input
+                      style={{ accentColor: "#6c9cc6" }}
                       type="checkbox"
                       id="share"
                       name="share"
-                      onClick={(e) => handleImageShare(e, item)}
+                      checked={item.public}
+                      onChange={(e) => handleToggleShare(e, item)}
+                      onClick={(e) => e.stopPropagation()}
                     ></input>
                   )}
                 </div>

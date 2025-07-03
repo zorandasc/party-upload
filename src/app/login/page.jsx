@@ -31,9 +31,9 @@ export default function LoginPage() {
         return;
       }
       toast.success("Dobro došli!");
-      //This ensures the whole app (including NavbarBottom) 
+      //This ensures the whole app (including NavbarBottom)
       // remounts and re-fetches /api/me.
-      window.location.href = "/";
+      window.location.href = "/homepage";
       //router.push("/");
     } catch (err) {
       console.log("Something went wrong", err);

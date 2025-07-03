@@ -6,28 +6,32 @@ import Paginator from "@/components/Paginator";
 import Spinner from "@/components/Spinner";
 import SideBar from "@/components/SideBar";
 
-const LIMIT = 10;
-
 //Imagegallery KOMBINUJE KOMPONENTU IMAGECONTAINER I PAGINACIJU
 //THIS setPage(prev => prev + 1), MEANS Only allow user actions
 //to update the page.
-export default function ImageGallery() {
+export default function ImageGallery({ filter = {}, sharedOnly = false }) {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [checkboxMode, setCheckboxMode] = useState(null); // 'trash' | 'share' | null
-  
+
+  const LIMIT = 10;
   const totalPages = Math.ceil(totalCount / LIMIT);
 
   useEffect(() => {
     const fetchImages = async () => {
       setLoading(true);
       try {
-        const res = await fetch(
-          `/api/images?limit=${LIMIT}&offset=${page * LIMIT}`
-        );
+        const params = new URLSearchParams({
+          limit: LIMIT,
+          offset: page * LIMIT,
+          ...filter,
+        });
+        const baseUrl = sharedOnly ? "/api/shared-images" : "/api/images";
+
+        const res = await fetch(`${baseUrl}?${params.toString()}`);
         const data = await res.json();
         setImages(data.files);
         setHasMore(data.hasMore);
@@ -40,7 +44,7 @@ export default function ImageGallery() {
     };
 
     fetchImages();
-  }, [page]);
+  }, [page, , sharedOnly, JSON.stringify(filter)]); // re-fetch if filter changes
 
   const handleLeftClick = () => setPage((prev) => Math.max(prev - 1, 0));
 
@@ -60,11 +64,13 @@ export default function ImageGallery() {
       ) : (
         <ImagesContainer images={images} checkboxMode={checkboxMode} />
       )}
-      <SideBar
-        handleTrash={handleTrash}
-        handleShare={handleShare}
-        checkboxMode={checkboxMode}
-      ></SideBar>
+      {!sharedOnly && (
+        <SideBar
+          handleTrash={handleTrash}
+          handleShare={handleShare}
+          checkboxMode={checkboxMode}
+        />
+      )}
       <Paginator
         loading={loading}
         page={page}

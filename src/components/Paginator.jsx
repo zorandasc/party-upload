@@ -19,7 +19,7 @@ export default function Paginatior({
         <FaAngleDoubleLeft />
       </button>
       <span style={{ margin: "0 1rem" }}>
-        Page {page + 1} of {totalPages}
+        Stranica {page + 1} / {totalPages}
       </span>
       <button
         className={styles.paginationButton}
