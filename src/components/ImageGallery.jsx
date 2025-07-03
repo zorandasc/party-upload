@@ -15,10 +15,10 @@ export default function ImageGallery() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [checkboxMode, setCheckboxMode] = useState(null); // 'trash' | 'share' | null
-
+  
   const totalPages = Math.ceil(totalCount / LIMIT);
 
   useEffect(() => {

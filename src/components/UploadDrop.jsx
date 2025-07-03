@@ -19,7 +19,7 @@ const UploadDrop = ({
       input={inputData}
       onUploadError={(error) => {
         console.error("Upload failed", error);
-        toast.error(error.message);
+        toast.error(error);
       }}
     ></UploadDropzone>
   );

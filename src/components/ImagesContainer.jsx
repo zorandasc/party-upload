@@ -24,7 +24,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
         toast.success("Slika je Podijeljenja", { icon: "👏" });
       } else {
         console.error("Failed to share image:", data.error);
-        toast.error( data.error);
+        toast.error(data.error);
       }
     } catch (err) {
       console.error("Request error:", err);
@@ -63,7 +63,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
                       onClick={(e) => e.stopPropagation()}
                     ></input>
                   )}
-                  {checkboxMode === "share" && (
+                  {!item.public && checkboxMode === "share" && (
                     <input
                       type="checkbox"
                       id="share"

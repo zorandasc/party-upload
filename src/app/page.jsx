@@ -52,6 +52,7 @@ const UploadPage = () => {
           return compressedFile;
         } catch (error) {
           console.error("Error compressing file:", error);
+          toast.error(error);
           return file; // Return original file if compression fails
         }
       })
