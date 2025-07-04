@@ -4,6 +4,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 
 import ImageModal from "./ImageModal";
+import CustomDeleteToast from "./CustomDeleteToast";
 
 const ImagesContainer = ({ images, checkboxMode }) => {
   //FOR MODAL IMAGE
@@ -15,7 +16,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
   //POSTO JE CHECK SADA KONTROLISANA KOMPONENTA
   const [imageState, setImageStates] = useState(images);
 
-  const toastIdRef = useRef(null); // 👈 track the toast
+  const toastIdRef = useRef(null); // 👈 track the toast so that we can dimissed manualy
 
   // Function to toggle share (public) state
   const handleToggleShare = async (e, item) => {
@@ -50,6 +51,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
     }
   };
 
+  // Function to toggle delete state
   const handelToggleDelete = async (e, item) => {
     e.stopPropagation();
 
@@ -64,7 +66,8 @@ const ImagesContainer = ({ images, checkboxMode }) => {
     });
   };
 
-  const deleteImagesAfterConfirm = async (id) => {
+  //confirm button on delete inside toast
+  const deleteImagesAfterConfirm = async () => {
     try {
       const res = await fetch("/api/delete-image", {
         method: "POST",
@@ -112,40 +115,13 @@ const ImagesContainer = ({ images, checkboxMode }) => {
     if (imagesToDelete.length === 1 && toastIdRef.current === null) {
       const toastId = toast.custom(
         (t) => (
-          <div
-            style={{
-              marginTop: "2rem",
-              padding: "1rem",
-              borderRadius: "30px 30px 0 0",
-              background: "rgba(255, 255, 255, 0.34)",
-              backdropFilter: "blur(7.1px)",
-
-              boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-              border: "1px solid rgba(255, 255, 255, 0.91)",
-            }}
-          >
-            <b>Slike označene za brisanje</b>
-            <div style={{ marginTop: "0.5rem" }}>
-              <button
-                onClick={() => deleteImagesAfterConfirm(t.id)}
-                style={{
-                  backgroundColor: "tomato",
-                  color: "#fff",
-                  padding: "0.5rem 1rem",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  marginTop: "0.5rem",
-                }}
-              >
-                Potvrdi brisanje
-              </button>
-            </div>
-          </div>
+          <CustomDeleteToast
+            handleClick={deleteImagesAfterConfirm}
+          ></CustomDeleteToast>
         ),
-        { duration: 90000 }
+        { duration: 90000 } //90s
       );
-      //TRACK THE TOAST
+      //TRACK THE TOAST SO WE CAN MANUALY DISMISED
       toastIdRef.current = toastId;
     }
 

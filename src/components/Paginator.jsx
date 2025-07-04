@@ -5,6 +5,7 @@ export default function Paginatior({
   loading,
   page,
   totalPages,
+  totalCount,
   hasMore,
   handleLeftClick,
   handleRightClick,
@@ -18,9 +19,10 @@ export default function Paginatior({
       >
         <FaAngleDoubleLeft />
       </button>
-      <span style={{ margin: "0 1rem" }}>
+      <span>
         Stranica {page + 1} / {totalPages}
       </span>
+      <span className={styles.total}>{totalCount}</span>
       <button
         className={styles.paginationButton}
         onClick={handleRightClick}

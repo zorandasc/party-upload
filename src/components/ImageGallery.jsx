@@ -77,6 +77,7 @@ export default function ImageGallery({ filter = {}, sharedOnly = false }) {
         page={page}
         totalPages={totalPages}
         hasMore={hasMore}
+        totalCount={totalCount}
         handleLeftClick={handleLeftClick}
         handleRightClick={handleRightClick}
       ></Paginator>

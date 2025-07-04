@@ -1,7 +1,7 @@
 .paginationControls {
   position: fixed;
   bottom: 70px; /* distance from bottom of viewport */
-  left: 70%;
+  left: 65%;
   transform: translateX(-50%);
   z-index: 900;
   background: rgba(255, 255, 255, 0.34);
@@ -39,4 +39,16 @@ text-shadow: 1px 1px #373333;
     border-radius: 5px;
     color: #fff;
     transition: all .4s;
+}
+
+.total{
+  /*
+  position: absolute;
+  left: 50px;
+  top:-20px;
+  */
+  background-color: rgb(243, 146, 21);
+  padding:2px 8px;
+  border-radius: 12px;
+  z-index: 2001;
 }
