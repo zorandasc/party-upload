@@ -33,6 +33,7 @@ export default function ImageGallery({ filter = {}, sharedOnly = false }) {
 
         const res = await fetch(`${baseUrl}?${params.toString()}`);
         const data = await res.json();
+
         setImages(data.files);
         setHasMore(data.hasMore);
         setTotalCount(data.totalCount);
@@ -44,17 +45,17 @@ export default function ImageGallery({ filter = {}, sharedOnly = false }) {
     };
 
     fetchImages();
-  }, [page, , sharedOnly, JSON.stringify(filter)]); // re-fetch if filter changes
+  }, [page, sharedOnly, JSON.stringify(filter)]); // re-fetch if filter changes
 
   const handleLeftClick = () => setPage((prev) => Math.max(prev - 1, 0));
 
   const handleRightClick = () =>
     setPage((prev) => Math.min(prev + 1, totalPages - 1));
 
-  const handleTrash = () =>
+  const handleTrashButton = () =>
     setCheckboxMode((prev) => (prev === "trash" ? null : "trash"));
 
-  const handleShare = () =>
+  const handleShareButton = () =>
     setCheckboxMode((prev) => (prev === "share" ? null : "share"));
 
   return (
@@ -66,8 +67,8 @@ export default function ImageGallery({ filter = {}, sharedOnly = false }) {
       )}
       {!sharedOnly && (
         <SideBar
-          handleTrash={handleTrash}
-          handleShare={handleShare}
+          handleTrash={handleTrashButton}
+          handleShare={handleShareButton}
           checkboxMode={checkboxMode}
         />
       )}
