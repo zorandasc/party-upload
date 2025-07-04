@@ -17,7 +17,7 @@ export default function ImageGallery({ filter = {}, sharedOnly = false }) {
   const [loading, setLoading] = useState(false);
   const [checkboxMode, setCheckboxMode] = useState(null); // 'trash' | 'share' | null
 
-  const LIMIT = 10;
+  const LIMIT = 20;
   const totalPages = Math.ceil(totalCount / LIMIT);
 
   useEffect(() => {

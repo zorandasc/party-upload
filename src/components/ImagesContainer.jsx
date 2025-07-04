@@ -87,19 +87,25 @@ const ImagesContainer = ({ images, checkboxMode }) => {
 
         setImagesToDelete([]); // Reset selected images
 
-        ////DISSMIS TOAST Dismiss custom toast manually
+        ////DISSMIS CUSTOM TOAST manually
         if (toastIdRef.current) {
           toast.dismiss(toastIdRef.current);
           toastIdRef.current = null;
         }
 
+        toast.success("Slike su obrisane", {
+          id: "delete-success",
+          duration: 4000,
+        });
         // Show success toast separately
+        /*
         setTimeout(() => {
           toast.success("Slike su obrisane", {
             id: "delete-success",
             duration: 4000,
           });
         }, 1000); // slight delay to avoid conflict
+        */
       } else {
         toast.error(data.error || "Greška pri brisanju slika");
       }

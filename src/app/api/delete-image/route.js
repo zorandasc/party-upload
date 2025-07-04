@@ -47,6 +47,8 @@ export async function POST(req) {
       .deleteMany({ _id: { $in: objectIds } });
 
     // Check MongoDB delete result first
+    //MOGUCE DA MONGO BRISANJE PUKNE OVDIJE, ALI NIJE STRASNO IMACEMO
+    //MONGO OBIJEKAT SA SLOMLJENIM URL
     if (result.deletedCount !== objectIds.length) {
       return NextResponse.json(
         { error: "Failed to delete some images from MongoDB" },

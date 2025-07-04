@@ -30,7 +30,7 @@ export async function GET(req) {
     const zip = new JSZip();
 
     // 2. Download each image and add to zip
-    for (const file of selectedChunk) {
+    for (const file of selectedChunk.files) {
       try {
         const fileRes = await fetch(file.url);
         if (!fileRes.ok) throw new Error("Image fetch failed");
