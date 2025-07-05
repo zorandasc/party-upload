@@ -11,7 +11,7 @@ import { useImageCount } from "@/context/ImageCountContext";
 const ImagesContainer = ({ images, checkboxMode }) => {
   const { setCount } = useImageCount();
   //FOR MODAL IMAGE
-  const [selectedImageInfo, setSelectedImageInfo] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
   const [imagesToDelete, setImagesToDelete] = useState([]);
 
@@ -115,7 +115,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
               key={i}
               className={styles.imageContainer}
               style={{ animationDelay: `${i * 0.1}s` }}
-              onClick={() => setSelectedImageInfo(item)}
+              onClick={() => setSelectedIndex(i)}
             >
               <Image
                 priority
@@ -160,8 +160,10 @@ const ImagesContainer = ({ images, checkboxMode }) => {
         })}
       </section>
       <ImageModal
-        imageInfo={selectedImageInfo}
-        onClose={() => setSelectedImageInfo(null)}
+        images={imageState}
+        currentIndex={selectedIndex}
+        setCurrentIndex={setSelectedIndex}
+        onClose={() => setSelectedIndex(null)}
       ></ImageModal>
     </>
   );
