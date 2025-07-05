@@ -61,6 +61,11 @@ const UploadPage = () => {
     const compressedFiles = await Promise.all(
       files.map(async (file) => {
         try {
+          if (file.size === 0) {
+            toast.error("Odabrani fajl je nevažeći ili prazan.");
+            return file;
+          }
+
           //FIRST MAKY COPY OF ORGINAL TO PREVENT CRASHES ON ANDROID
           const fileCopy = new File([file], file.name, { type: file.type });
 
