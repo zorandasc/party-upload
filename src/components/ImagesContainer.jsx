@@ -12,11 +12,8 @@ const ImagesContainer = ({ images, checkboxMode }) => {
 
   const [imagesToDelete, setImagesToDelete] = useState([]);
 
-  //FOR LOCAL VISULA CHANGE WHEN CLICKED SHARE CHECKE/ONCHECK
-  //POSTO JE CHECK SADA KONTROLISANA KOMPONENTA
+  //FOR LOCAL VISULA CHANGE WHEN CLICKED SHARE CHECKE/ONCHECK OR DELETETATION
   const [imageState, setImageStates] = useState(images);
-
-  const toastIdRef = useRef(null); // 👈 track the toast so that we can dimissed manualy
 
   // Function to toggle share (public) state
   const handleToggleShare = async (e, item) => {
@@ -52,7 +49,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
   };
 
   // Function to toggle delete state
-  const handelToggleDelete = async (e, item) => {
+  const handleToggleDelete = (e, item) => {
     e.stopPropagation();
 
     const isChecked = e.target.checked;
@@ -67,7 +64,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
   };
 
   //confirm button on delete inside toast
-  const deleteImagesAfterConfirm = async () => {
+  const confirmDeletion = async () => {
     try {
       const res = await fetch("/api/delete-image", {
         method: "POST",
@@ -78,6 +75,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
       const data = await res.json();
 
       if (res.ok) {
+        toast.success(`${imagesToDelete.length} slika uspiješno obrisano`);
         // Remove deleted images from UI
         setImageStates((prev) =>
           prev.filter(
@@ -86,61 +84,24 @@ const ImagesContainer = ({ images, checkboxMode }) => {
         );
 
         setImagesToDelete([]); // Reset selected images
-
-        ////DISSMIS CUSTOM TOAST manually
-        if (toastIdRef.current) {
-          toast.dismiss(toastIdRef.current);
-          toastIdRef.current = null;
-        }
-
-        toast.success("Slike su obrisane", {
-          id: "delete-success",
-          duration: 4000,
-        });
-        // Show success toast separately
-        /*
-        setTimeout(() => {
-          toast.success("Slike su obrisane", {
-            id: "delete-success",
-            duration: 4000,
-          });
-        }, 1000); // slight delay to avoid conflict
-        */
       } else {
         toast.error(data.error || "Greška pri brisanju slika");
       }
     } catch (error) {
-      console.error(err);
+      console.error(error);
       toast.error("Greška na serveru");
     }
   };
 
-  //USEEFFECT TO DISPLAY TOAST, WITH CONFIRM DELETE NOTIFICATION
-  useEffect(() => {
-    //PRIKAZI TOAST SAMO NA PRVI DELETE CHECKBOX
-    if (imagesToDelete.length === 1 && toastIdRef.current === null) {
-      const toastId = toast.custom(
-        (t) => (
-          <CustomDeleteToast
-            handleClick={deleteImagesAfterConfirm}
-          ></CustomDeleteToast>
-        ),
-        { duration: 90000 } //90s
-      );
-      //TRACK THE TOAST SO WE CAN MANUALY DISMISED
-      toastIdRef.current = toastId;
-    }
-
-    //DISSMIS TOAST KADA JE PRZAZAN imagesToDelete[]
-    if (imagesToDelete.length === 0 && toastIdRef.current !== null) {
-      toast.dismiss(toastIdRef.current);
-      toastIdRef.current = null;
-    }
-  }, [imagesToDelete]);
-
   return (
     <>
       <section className={styles.uploadedImages}>
+        {imagesToDelete.length > 0 && (
+          <CustomDeleteToast
+            numberOfImages={imagesToDelete.length}
+            handleClick={confirmDeletion}
+          ></CustomDeleteToast>
+        )}
         {imageState?.map((item, i) => {
           return (
             <div
@@ -170,7 +131,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
                       checked={imagesToDelete.some(
                         (img) => img.id === item._id
                       )}
-                      onChange={(e) => handelToggleDelete(e, item)}
+                      onChange={(e) => handleToggleDelete(e, item)}
                       onClick={(e) => e.stopPropagation()}
                     ></input>
                   )}
