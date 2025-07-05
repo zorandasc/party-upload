@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import styles from "./imagesContainer.module.css";
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -6,7 +6,10 @@ import toast from "react-hot-toast";
 import ImageModal from "./ImageModal";
 import CustomDeleteToast from "./CustomDeleteToast";
 
+import { useImageCount } from "@/context/ImageCountContext";
+
 const ImagesContainer = ({ images, checkboxMode }) => {
+  const { setCount } = useImageCount();
   //FOR MODAL IMAGE
   const [selectedImageInfo, setSelectedImageInfo] = useState(null);
 
@@ -76,6 +79,10 @@ const ImagesContainer = ({ images, checkboxMode }) => {
 
       if (res.ok) {
         toast.success(`${imagesToDelete.length} slika uspiješno obrisano`);
+
+        //INFORM CONTEXT
+        setCount((prev) => prev - imagesToDelete.length);
+
         // Remove deleted images from UI
         setImageStates((prev) =>
           prev.filter(
@@ -83,7 +90,7 @@ const ImagesContainer = ({ images, checkboxMode }) => {
           )
         );
 
-        setImagesToDelete([]); // Reset selected images
+        setImagesToDelete([]); // Reset selected images FOR DELETATION
       } else {
         toast.error(data.error || "Greška pri brisanju slika");
       }

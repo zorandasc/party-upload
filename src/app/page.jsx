@@ -1,13 +1,20 @@
 "use client";
-import Image from "next/image";
-import React, { useState, useEffect } from "react";
-import imageCompression from "browser-image-compression";
-import UploadDrop from "@/components/UploadDrop";
-import Ribbon from "@/components/Ribbon";
-import toast from "react-hot-toast";
+
 import styles from "./page.module.css";
 
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+
+import imageCompression from "browser-image-compression";
+import UploadDrop from "@/components/UploadDrop";
+
+import Ribbon from "@/components/Ribbon";
+import toast from "react-hot-toast";
+
+import { useImageCount } from "@/context/ImageCountContext";
+
 const UploadPage = () => {
+  const { setCount } = useImageCount();
   //UPLOADED IMAGES
   const [images, setImages] = useState([]);
   //OPCIONO IME USERA
@@ -37,6 +44,10 @@ const UploadPage = () => {
       };
     });
 
+    //INFORM CONTEXT
+    setCount((prev) => prev + newImages.length);
+
+    //ADD TO LOCALSTORAGE
     const updatedImages = [...newImages, ...images];
 
     setImages(updatedImages);

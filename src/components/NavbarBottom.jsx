@@ -9,10 +9,12 @@ import {
   FaCloudUploadAlt,
   FaCloudDownloadAlt,
 } from "react-icons/fa";
+import { useImageCount } from "@/context/ImageCountContext";
 
 const NavbarBottom = () => {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { count } = useImageCount();
 
   useEffect(() => {
     async function checkAuth() {
@@ -29,13 +31,14 @@ const NavbarBottom = () => {
   return (
     <nav className={styles.nav}>
       <ul className={styles.menu}>
-         {isLoggedIn && (
+        {isLoggedIn && (
           <li
             className={`${styles.link} ${
               pathname === "/homepage" ? styles.active : ""
             }`}
           >
             <Link href="/homepage">
+              <div className={styles.total}>{count}</div>
               <FaHome />
             </Link>
           </li>
@@ -60,7 +63,7 @@ const NavbarBottom = () => {
             </Link>
           </li>
         )}
-       
+
         <li
           className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}
         >
@@ -68,8 +71,6 @@ const NavbarBottom = () => {
             <FaCloudUploadAlt />
           </Link>
         </li>
-
-        
       </ul>
     </nav>
   );

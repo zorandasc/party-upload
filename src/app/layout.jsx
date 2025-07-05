@@ -1,6 +1,7 @@
 import "@uploadthing/react/styles.css";
 import "./globals.css";
 import NavbarBottom from "@/components/NavbarBottom";
+import { ImageCountProvider } from "@/context/ImageCountContext";
 import { Toaster } from "react-hot-toast";
 import { Lora, Inter, Parisienne } from "next/font/google";
 
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
       <body
         className={` ${parisienne.variable} ${lora.variable} ${inter.variable}`}
       >
+         <ImageCountProvider>
         <main className="main">{children}</main>
         <NavbarBottom></NavbarBottom>
         <Toaster
@@ -48,6 +50,7 @@ export default function RootLayout({ children }) {
             },
           }}
         />
+        </ImageCountProvider>
       </body>
     </html>
   );
