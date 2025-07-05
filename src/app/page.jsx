@@ -61,7 +61,10 @@ const UploadPage = () => {
     const compressedFiles = await Promise.all(
       files.map(async (file) => {
         try {
-          const compressedFile = await imageCompression(file, {
+          //FIRST MAKY COPY OF ORGINAL TO PREVENT CRASHES ON ANDROID
+          const fileCopy = new File([file], file.name, { type: file.type });
+
+          const compressedFile = await imageCompression(fileCopy, {
             maxSizeMB: 2.5, // Aim below 4MB but keep quality decent
             maxWidthOrHeight: 1920, // Standard HD resolution is usually enough
             useWebWorker: true, // Improves performance
