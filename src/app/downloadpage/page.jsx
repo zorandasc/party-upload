@@ -2,7 +2,9 @@
 import { useEffect, useState } from "react";
 import { FaGift } from "react-icons/fa";
 import styles from "./page.module.css";
+
 import Ribbon from "@/components/Ribbon";
+import Spinner from "@/components/Spinner";
 
 const DownloadPage = () => {
   const [zipCount, setZipCount] = useState(0);
@@ -25,13 +27,7 @@ const DownloadPage = () => {
     fetchMeta();
   }, []);
 
-  if (loading) {
-    return (
-      <div className={styles.spinnerContainer}>
-        <div className={styles.spinner}></div>
-      </div>
-    );
-  }
+  if (loading) return <Spinner></Spinner>;
 
   if (zipCount === 0) return <p>Nema fajlova za download.</p>;
 
