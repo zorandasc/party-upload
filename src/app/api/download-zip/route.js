@@ -17,6 +17,7 @@ export async function GET(req) {
     const files = await db.collection("images").find({}).toArray();
 
     const chunks = splitIntoChunks(files);
+
     //IZABERI KOJI CHUNK USER HOCE DA DOWNLOADUJE
     const selectedChunk = chunks[page - 1];
 
@@ -34,6 +35,13 @@ export async function GET(req) {
       try {
         const fileRes = await fetch(file.url);
         if (!fileRes.ok) throw new Error("Image fetch failed");
+
+        //arrayBuffer(): This is a method available on the Response interface 
+        // (and also on Blob objects). When called, it reads the entire body 
+        //of the response and returns a Promise that resolves with an ArrayBuffer.
+        //An ArrayBuffer is a generic, fixed-length raw binary data buffer. 
+        // It's essentially a chunk of memory that holds bytes. 
+        // It's a low-level representation and cannot be directly manipulated
         const blob = await fileRes.arrayBuffer();
         // Default to jpg if no extension
         const extension = file.name?.split(".").pop() || "jpg";
