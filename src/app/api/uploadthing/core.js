@@ -55,7 +55,7 @@ export const ourFileRouter = {
           public: false,
         };
         await db.collection("images").insertOne(imageDoc);
-        console.log("✅ Image metadata saved to DB:", imageDoc);
+        //console.log("✅ Image metadata saved to DB:", imageDoc);
       } catch (err) {
         console.error("❌ Failed to save image metadata:", err);
       }

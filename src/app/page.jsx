@@ -63,7 +63,8 @@ const UploadPage = () => {
         try {
           if (file.size === 0) {
             toast.error("Odabrani fajl je nevažeći ili prazan.");
-            return file;
+            console.warn("Skipping empty file:", file.name);
+            return null;
           }
 
           //FIRST MAKY COPY OF ORGINAL TO PREVENT CRASHES ON ANDROID
@@ -75,15 +76,30 @@ const UploadPage = () => {
             useWebWorker: true, // Improves performance
             initialQuality: 0.8,
           });
+          if (compressedFile.size > 4 * 1024 * 1024) {
+            // 4MB in bytes
+            toast.error(
+              `"${file.name}" je prevelik (${(
+                compressedFile.size /
+                (1024 * 1024)
+              ).toFixed(2)} MB) i neće biti poslan.`
+            );
+            console.warn(
+              `File "${file.name}" is still too large after compression: ${
+                compressedFile.size / (1024 * 1024)
+              } MB`
+            );
+            return null; // Return null to filter this file out
+          }
           return compressedFile;
         } catch (error) {
           console.error("Error compressing file:", error);
-          toast.error(error);
-          return file; // Return original file if compression fails
+          toast.error("Greška pri kompresiji slike.");
+          return null; // Return original file if compression fails
         }
       })
     );
-    return compressedFiles;
+    return compressedFiles.filter(Boolean);
   };
 
   //RESET UPLOADROP AKO SE DOGODILA GRESKA
