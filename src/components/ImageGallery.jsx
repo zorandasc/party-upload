@@ -40,7 +40,8 @@ export default function ImageGallery({ filter = {}, sharedOnly = false }) {
         setTotalCount(data.totalCount);
 
         //INFORM CONTEXT, FLUSH OLD AND SET NEW TOTAL
-        setCount(data.totalCount);
+        //ALI SAMO ZA HOMEPAGE
+        !sharedOnly && setCount(data.totalCount);
       } catch (error) {
         console.error("Fetch error:", error);
       } finally {
