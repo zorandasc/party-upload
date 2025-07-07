@@ -107,7 +107,7 @@
    /* Ample padding inside the div */
   /* Center the div on the page with some vertical margin */
   max-width: 600px; /* Limit the width for better readability on large screens */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
+/* Soft shadow for depth */
   font-family: 'Georgia', serif; /* Elegant serif font for a classic touch */
   color: #333; /* Dark grey text for good contrast */
   text-align: center; /* Center align all text within the div */

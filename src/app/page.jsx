@@ -37,30 +37,6 @@ const UploadPage = () => {
     }
   }, []);
 
-  //PRESENT USER UPLODADED IMAGES AKO IH JE IMAO
-  const handleOnUploadComplete = (res) => {
-    toast.success("Hvala! Slike su poslane!");
-    const newImages = res?.map(({ customId, key, name, ufsUrl }) => {
-      return {
-        customId,
-        key,
-        name,
-        ufsUrl,
-      };
-    });
-
-    //INFORM CONTEXT
-    setCount((prev) => prev + newImages.length);
-
-    //ADD TO LOCALSTORAGE
-    const updatedImages = [...newImages, ...images];
-
-    setImages(updatedImages);
-
-    // Save to localStorage
-    localStorage.setItem("uploadedImages", JSON.stringify(updatedImages));
-  };
-
   // COMPRES EACH FILE BEFORE UPLOADING
   const handleBeforeUpload = async (files) => {
     const compressedFiles = await Promise.all(
@@ -100,11 +76,36 @@ const UploadPage = () => {
         } catch (error) {
           console.error("Error compressing file:", error);
           toast.error(`Greška pri kompresiji slike, ${file.name}`);
-          return null; 
+          return null;
         }
       })
     );
     return compressedFiles.filter(Boolean);
+  };
+
+  //PRESENT USER UPLODADED IMAGES AKO IH JE IMAO
+  const handleOnUploadComplete = (res) => {
+    const newImages = res?.map(({ customId, key, name, ufsUrl }) => {
+      return {
+        customId,
+        key,
+        name,
+        ufsUrl,
+      };
+    });
+
+    //INFORM CONTEXT
+    setCount((prev) => prev + newImages.length);
+
+    //ADD TO LOCALSTORAGE
+    const updatedImages = [...newImages, ...images];
+
+    setImages(updatedImages);
+
+    toast.success(`Hvala! ${newImages.length} slike su poslane!`);
+
+    // Save to localStorage
+    localStorage.setItem("uploadedImages", JSON.stringify(updatedImages));
   };
 
   //RESET UPLOADROP AKO SE DOGODILA GRESKA
