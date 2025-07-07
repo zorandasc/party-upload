@@ -9,14 +9,6 @@ const SharedPage = () => {
         <Ribbon text="Matalija & Borivoje"></Ribbon>
       </div>
 
-      {/* 
-      <div className={styles.quoteContainer}>
-        <p className={styles.quote}>
-          Hvala vam što ste deo naše priče i što sa nama delite radost ovog
-          dana.
-        </p>
-      </div>
-*/}
       <ImageGallery sharedOnly={true} />
     </div>
   );

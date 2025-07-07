@@ -3,7 +3,6 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  /*min-height: 100vh;*/
   box-sizing: border-box;
   position: relative;
   z-index: 0;
@@ -82,4 +81,58 @@
     font-size: 0.9rem;
     padding: 0.5rem 0.75rem;
   }
+}
+
+
+.clearButton {
+  padding: 0.55rem 1rem;
+  background-color: #ff5555;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-left: auto
+}
+
+.clearButton:hover {
+  background-color: #ff0000;
+}
+
+.quoteContainer{
+    /* A very light grey background for a soft feel */
+   /* Subtle border to define the section */
+  border-radius: 8px; /* Slightly rounded corners for a modern look */
+   /* Ample padding inside the div */
+  /* Center the div on the page with some vertical margin */
+  max-width: 600px; /* Limit the width for better readability on large screens */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
+  font-family: 'Georgia', serif; /* Elegant serif font for a classic touch */
+  color: #333; /* Dark grey text for good contrast */
+  text-align: center; /* Center align all text within the div */
+  
+}
+
+.quote{
+   font-size: 2em; /* Slightly larger text for readability */
+ 
+  color: #555; /* Slightly lighter grey for paragraph text */
+  margin-bottom: 0; /* Remove default bottom margin if not needed */
+  position: relative; /* Needed for positioning the pseudo-element */
+  padding-top: 50px; 
+  font-family: var(--font-parisienne);
+}
+
+.quote::before {
+  content: "“"; /* The actual quote character */
+  font-size: 5em; /* Make the quote very large */
+  color: #6c9cc6; /* A light grey color for the quote mark, so it's subtle */
+  position: absolute; /* Position it relative to the paragraph */
+  top: -8px; /* Adjust as needed to position the quote mark vertically above the text */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust for true centering based on its own width */
+  font-family: 'Times New Roman', serif; /* A classic serif font for the quote mark */
+  line-height: 0.8; /* Adjust line height to prevent it from pushing text down */
+  z-index: 0; 
 }

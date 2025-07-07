@@ -79,6 +79,7 @@ const DownloadPage = () => {
       toast.dismiss(loadingToastId);
       toast.error(`Došlo je do neočekivane greške: ${error.message}`);
     } finally {
+      //ENABLE DOWNLOAD BUTTON
       setDownloadingIndex(null);
     }
   };

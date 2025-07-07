@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { FaTrashAlt } from "react-icons/fa";
 
 import imageCompression from "browser-image-compression";
 import UploadDrop from "@/components/UploadDrop";
@@ -14,11 +15,15 @@ import toast from "react-hot-toast";
 import { useImageCount } from "@/context/ImageCountContext";
 
 const UploadPage = () => {
+  //INFORM CONTEXT OF ULOADED IMAGES
   const { setCount } = useImageCount();
+
   //UPLOADED IMAGES
   const [images, setImages] = useState([]);
+
   //OPCIONO IME USERA
   const [userName, setUserName] = useState("");
+
   //OVAJ KLJUC SE KORISTI DA SE RESETUJE UPLOADDROP
   //NAKON STO SE DOGODI GRESKA, JER AKO SE NE RESETUJE, OSTANE U GRESCI
   //React will re-render a component from scratch if its key changes.
@@ -94,8 +99,8 @@ const UploadPage = () => {
           return compressedFile;
         } catch (error) {
           console.error("Error compressing file:", error);
-          toast.error("Greška pri kompresiji slike.");
-          return null; // Return original file if compression fails
+          toast.error(`Greška pri kompresiji slike, ${file.name}`);
+          return null; 
         }
       })
     );
@@ -133,26 +138,51 @@ const UploadPage = () => {
     userName: userName || "Gost",
   };
 
+  const handleClearLocalStorage = () => {
+    localStorage.removeItem("uploadedImages");
+    setImages([]); // Clear from state too
+    toast.success("Slike su obrisane iz vaše istorije.");
+  };
+
   return (
     <div className={styles.pageContainer}>
       <Ribbon text="Matalija & Borivoje"></Ribbon>
       <section className={styles.uploadedImagesSmall}>
-        {images?.map((item, i) => (
-          // Display each uploaded image
-          <div key={i} className={styles.imagesContainer}>
-            <Image
-              priority
-              src={item.ufsUrl}
-              blurDataURL={item.ufsUrl}
-              placeholder="blur"
-              alt="image"
-              layout="fill"
-              sizes="100%"
-              className={styles.image}
-            ></Image>
+        {images.length > 0 ? (
+          <>
+            {images?.map((item, i) => (
+              // Display each uploaded image
+              <div key={i} className={styles.imagesContainer}>
+                <Image
+                  priority
+                  src={item.ufsUrl}
+                  blurDataURL={item.ufsUrl}
+                  placeholder="blur"
+                  alt="image"
+                  layout="fill"
+                  sizes="100%"
+                  className={styles.image}
+                ></Image>
+              </div>
+            ))}
+          </>
+        ) : (
+          <div className={styles.quoteContainer}>
+            <p className={styles.quote}>
+              Hvala vam što ste deo naše priče i što sa nama delite radost ovog
+              dana.
+            </p>
           </div>
-        ))}
+        )}
       </section>
+      {images.length > 0 && (
+        <button
+          onClick={handleClearLocalStorage}
+          className={styles.clearButton}
+        >
+          <FaTrashAlt></FaTrashAlt>
+        </button>
+      )}
       <form className={styles.uploadForm}>
         <input
           id="userName"

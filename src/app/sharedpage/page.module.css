@@ -6,39 +6,3 @@
  
 }
 
-.quoteContainer{
-      background-color: whitesmoke; /* A very light grey background for a soft feel */
-  border: 1px solid #e0e0e0; /* Subtle border to define the section */
-  border-radius: 8px; /* Slightly rounded corners for a modern look */
-  padding: 25px; /* Ample padding inside the div */
-  margin: 20px auto; /* Center the div on the page with some vertical margin */
-  max-width: 600px; /* Limit the width for better readability on large screens */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
-  font-family: 'Georgia', serif; /* Elegant serif font for a classic touch */
-  color: #333; /* Dark grey text for good contrast */
-  text-align: center; /* Center align all text within the div */
-  margin-top: 4rem;
-}
-
-.quote{
-   font-size: 2.1em; /* Slightly larger text for readability */
- 
-  color: #555; /* Slightly lighter grey for paragraph text */
-  margin-bottom: 0; /* Remove default bottom margin if not needed */
-  position: relative; /* Needed for positioning the pseudo-element */
-  padding-top: 80px; 
-  font-family: var(--font-parisienne);
-}
-
-.quote::before {
-  content: "“"; /* The actual quote character */
-  font-size: 8em; /* Make the quote very large */
-  color: #6c9cc6; /* A light grey color for the quote mark, so it's subtle */
-  position: absolute; /* Position it relative to the paragraph */
-  top: -20px; /* Adjust as needed to position the quote mark vertically above the text */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Adjust for true centering based on its own width */
-  font-family: 'Times New Roman', serif; /* A classic serif font for the quote mark */
-  line-height: 0.8; /* Adjust line height to prevent it from pushing text down */
-  z-index: 0; 
-}
