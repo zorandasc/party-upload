@@ -52,7 +52,7 @@ const UploadPage = () => {
           const fileCopy = new File([file], file.name, { type: file.type });
 
           const compressedFile = await imageCompression(fileCopy, {
-            maxSizeMB: 2.5, // Aim below 4MB but keep quality decent
+            maxSizeMB: 3, // Aim below 4MB but keep quality decent
             maxWidthOrHeight: 1920, // Standard HD resolution is usually enough
             useWebWorker: true, // Improves performance
             initialQuality: 0.8,

@@ -22,6 +22,7 @@ export const config = {
     "/downloadpage", // protect /downloadpage
     "/api/download-zip/:path*", //protect api routes
     "/api/images/:path*", //protect api route
-    "/api/share-image"
+    "/api/share-image",
+    "/api/delete-image",
   ],
 };
