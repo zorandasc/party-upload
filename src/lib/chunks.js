@@ -1,6 +1,6 @@
 export function splitIntoChunks(files) {
-  const MAX_FILES_PER_ZIP = 50;
-  const MAX_ZIP_SIZE_MB = 100;
+  const MAX_FILES_PER_ZIP = 100;
+  const MAX_ZIP_SIZE_MB = 50;
   let chunks = [];
   let currentChunk = [];
   let currentSize = 0;
