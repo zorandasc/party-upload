@@ -1,3 +1,51 @@
+npm run dev -- --hostname 0.0.0.0
+
+
+// COMPRES EACH FILE BEFORE UPLOADING
+  const handleBeforeUpload_v1 = async (files) => {
+    const compressedFiles = await Promise.all(
+      files.map(async (file) => {
+        try {
+          //FIRST MAKY COPY OF ORGINAL TO PREVENT CRASHES ON ANDROID
+          const fileCopy = new File([file], file.name, { type: file.type });
+
+          const sizeInMB = fileCopy.size / 1024 / 1024;
+
+          if (sizeInMB === 0) {
+            toast.error("Odabrani fajl je nevažeći ili prazan.");
+            console.warn("Skipping empty file:", file.name);
+            return null;
+          }
+
+          //DONT COMPRESS
+          if (sizeInMB < 2) return fileCopy;
+
+          //POKUSAJ KOMPRESIJU KLIJENT SIDE
+          const compressedFile = await imageCompression(fileCopy, {
+            maxSizeMB: 4, // Aim below 4MB but keep quality decent
+            maxWidthOrHeight: 3250, //
+            useWebWorker: true, // Improves performance
+            initialQuality: 0.9,
+          });
+
+          return compressedFile;
+        } catch (error) {
+          //AKO COMPRESIJA OMANE NISTA NASTAV DA SALJES
+          // ORGINALNI FAJL(fileCopy) ALI SAMO AKO JE MANJI OD 10MB
+          console.error(`Error compressing file ${fileCopy.name}:`, error);
+
+          if (fileCopy.size > 10 * 1024 * 1024) {
+            toast.error(`${fileCopy.name} je prevelik ili pokušajte ponovo.`);
+            return null; // Return null to filter this file out
+          }
+
+          return fileCopy;
+        }
+      })
+    );
+    return compressedFiles.filter(Boolean);
+  };
+
 # DA BI APLIKACIJA RADILA MORA POSTOJATI TOKEN U .env
 
 # UPLOADTHING_TOKEN=

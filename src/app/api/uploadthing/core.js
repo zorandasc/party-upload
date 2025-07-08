@@ -1,6 +1,4 @@
 import { createUploadthing } from "uploadthing/next";
-//import { UploadThingError } from "uploadthing/server";
-import { UTFiles } from "uploadthing/server";
 import { z } from "zod";
 import clientPromise from "@/lib/mongodb";
 
@@ -8,7 +6,7 @@ const f = createUploadthing();
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
-  multipleImageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 4 } })
+  multipleImageUploader: f({ image: { maxFileSize: "10MB", maxFileCount: 4 } })
     .input(
       z.object({
         userName: z
@@ -25,17 +23,9 @@ export const ourFileRouter = {
 
       const userName = input.userName || "Gost";
 
-      //DODAJ customId NA SVAKI FILE, KOJI INACE MORA BITI JEDINSTVEN
-      const fileOverrides = files.map((file) => {
-        return {
-          ...file,
-          customId: `${userName}-${Date.now()}-${Math.random()}`,
-        };
-      });
-
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       //JA DODADO PRVI PRAMAETAR JE METADADA, DRUGI SU FILES KOJI IDU NA uploadthing.com
-      return { userId: userName, [UTFiles]: fileOverrides };
+      return { userId: userName };
     })
     // This code RUNS ON YOUR SERVER after upload
     .onUploadComplete(async ({ metadata, file }) => {
@@ -49,7 +39,6 @@ export const ourFileRouter = {
           type: file.type,
           size: file.size,
           key: file.key,
-          customId: file.customId,
           userId: metadata.userId,
           uploadedAt: new Date(),
           public: false,

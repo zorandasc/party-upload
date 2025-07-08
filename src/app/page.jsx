@@ -39,55 +39,123 @@ const UploadPage = () => {
 
   // COMPRES EACH FILE BEFORE UPLOADING
   const handleBeforeUpload = async (files) => {
-    const compressedFiles = await Promise.all(
-      files.map(async (file) => {
-        try {
-          if (file.size === 0) {
-            toast.error("Odabrani fajl je nevažeći ili prazan.");
-            console.warn("Skipping empty file:", file.name);
-            return null;
-          }
+    const processedFiles = [];
 
-          //FIRST MAKY COPY OF ORGINAL TO PREVENT CRASHES ON ANDROID
-          const fileCopy = new File([file], file.name, { type: file.type });
+    for (const file of files) {
+      // Sequential processing
+      try {
+        // --- DEBUGGING: Log original file details ---
+        /*
+        console.log(
+          `Processing file: ${file.name}, Type: ${file.type}, Size: ${(
+            file.size /
+            (1024 * 1024)
+          ).toFixed(2)} MB`
+        );
+        */
+        // --- END DEBUGGING ---
 
-          const compressedFile = await imageCompression(fileCopy, {
-            maxSizeMB: 3, // Aim below 4MB but keep quality decent
-            maxWidthOrHeight: 1920, // Standard HD resolution is usually enough
-            useWebWorker: true, // Improves performance
-            initialQuality: 0.8,
-          });
-          if (compressedFile.size > 4 * 1024 * 1024) {
-            // 4MB in bytes
-            toast.error(
-              `"${file.name}" je prevelik (${(
-                compressedFile.size /
-                (1024 * 1024)
-              ).toFixed(2)} MB) i neće biti poslan.`
-            );
-            console.warn(
-              `File "${file.name}" is still too large after compression: ${
-                compressedFile.size / (1024 * 1024)
-              } MB`
-            );
-            return null; // Return null to filter this file out
-          }
-          return compressedFile;
-        } catch (error) {
-          console.error("Error compressing file:", error);
-          toast.error(`Greška pri kompresiji slike, ${file.name}`);
-          return null;
+        if (file.size === 0) {
+          toast.error("Odabrani fajl je nevažeći ili prazan.");
+          console.warn("Skipping empty file:", file.name);
+          continue; // Skip empty files
         }
-      })
-    );
-    return compressedFiles.filter(Boolean);
+
+        // Ensure it's an image before attempting compression
+        if (!file.type.startsWith("image/")) {
+          console.warn(
+            `Unsupported file type detected, skipping: ${file.name} (${file.type})`
+          );
+          toast.error(
+            `"${file.name}" ima nepodržan format i neće biti poslan.`
+          );
+          continue;
+        }
+
+        // --- NEW AGGRESSIVE FILE STABILIZATION ---
+        // Read the file into an ArrayBuffer and create a new File object from it.
+        // This forces the browser to create a fresh in-memory copy,
+        // potentially bypassing underlying file reference issues.
+        const arrayBuffer = await file.arrayBuffer();
+        const stableFile = new File([arrayBuffer], file.name, {
+          type: file.type,
+          lastModified: file.lastModified,
+        });
+        // --- END NEW AGGRESSIVE FILE STABILIZATION ---
+
+        const sizeInMB = stableFile.size / 1024 / 1024; // Use stableFile size
+
+        // DONT COMPRESS if already small
+        if (sizeInMB < 2) {
+          processedFiles.push(stableFile); // Push stableFile directly
+          continue;
+        }
+
+        // POKUSAJ KOMPRESIJU KLIJENT SIDE
+        // Use the stableFile for compression
+        const compressedFile = await imageCompression(stableFile, {
+          // <-- Use stableFile here
+          maxSizeMB: 4, // Aim below 4MB but keep quality decent
+          maxWidthOrHeight: 4000, //
+          useWebWorker: true, // Improves performance
+          initialQuality: 0.9,
+        });
+
+        // Client-side check against Uploadthing's 10MB limit (from core.js)
+        const UPLOADTHING_MAX_SIZE_MB = 10;
+        if (compressedFile.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
+          toast.error(
+            `"${file.name}" je prevelik (${(
+              compressedFile.size /
+              (1024 * 1024)
+            ).toFixed(2)} MB) i neće biti poslan.`
+          );
+          console.warn(
+            `Image "${file.name}" is still too large after compression: ${(
+              compressedFile.size /
+              (1024 * 1024)
+            ).toFixed(2)} MB`
+          );
+          continue; // Skip oversized files
+        }
+
+        console.log(
+          `Compressed image ${file.name} from ${sizeInMB.toFixed(2)} MB to ${(
+            compressedFile.size /
+            (1024 * 1024)
+          ).toFixed(2)} MB`
+        );
+        processedFiles.push(compressedFile);
+      } catch (error) {
+        // If compression fails, try to send the original file if it's within limits.
+        // This is the fallback for when compression itself fails (e.g., ProgressEvent).
+        console.error(`Error compressing file ${file.name}:`, error); // Log original file name
+
+        const UPLOADTHING_MAX_SIZE_MB = 10; // Use the same max size as your core.js
+
+        if (file.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
+          // Check original file size
+          toast.error(
+            `${file.name} je prevelik i nije mogao biti obrađen. Molimo pokušajte ponovo.`
+          );
+          // If original file is too big, filter it out
+          continue;
+        }
+        processedFiles.push(file); // Push original file if compression failed but it's within limits
+      }
+    }
+
+    // --- Add a small delay before returning the files array ---
+    // This might give the browser a moment to stabilize its internal file references.
+    await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 100ms
+
+    return processedFiles; // No need for .filter(Boolean) with this structure
   };
 
   //PRESENT USER UPLODADED IMAGES AKO IH JE IMAO
   const handleOnUploadComplete = (res) => {
-    const newImages = res?.map(({ customId, key, name, ufsUrl }) => {
+    const newImages = res?.map(({ key, name, ufsUrl }) => {
       return {
-        customId,
         key,
         name,
         ufsUrl,
@@ -102,7 +170,9 @@ const UploadPage = () => {
 
     setImages(updatedImages);
 
-    toast.success(`Hvala! ${newImages.length} slike su poslane!`);
+    if (newImages.length > 0) {
+      toast.success(`Hvala! ${newImages.length} slike su poslane!`);
+    }
 
     // Save to localStorage
     localStorage.setItem("uploadedImages", JSON.stringify(updatedImages));
@@ -128,8 +198,10 @@ const UploadPage = () => {
       toast.error(
         "Jedan ili više fajlova je prevelik. Max velična jednog fajla je 4MB."
       );
+    } else if (message.toLowerCase().includes("invalid")) {
+      toast.error("Ime mora biti od min 2 do 20 slova.");
     } else {
-      toast.error(message);
+      toast.error(`${message}. Molim Vas pokusajte ponovo.`);
     }
   };
 
