@@ -76,7 +76,14 @@ const UploadPage = () => {
         // Read the file into an ArrayBuffer and create a new File object from it.
         // This forces the browser to create a fresh in-memory copy,
         // potentially bypassing underlying file reference issues.
-        const arrayBuffer = await file.arrayBuffer();
+        const arrayBuffer = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () =>
+            reject(new Error(`Failed to read file ${file.name}`));
+          reader.readAsArrayBuffer(file);
+        });
+
         const stableFile = new File([arrayBuffer], file.name, {
           type: file.type,
           lastModified: file.lastModified,
@@ -200,6 +207,10 @@ const UploadPage = () => {
       );
     } else if (message.toLowerCase().includes("invalid")) {
       toast.error("Ime mora biti od min 2 do 20 slova.");
+    } else if (message.toLowerCase().includes("upload_failed")) {
+      toast.error(
+        "Upload nije uspeo. Pokušajte ponovo ili izaberite druge fajlove."
+      );
     } else {
       toast.error(`${message}. Molim Vas pokusajte ponovo.`);
     }
