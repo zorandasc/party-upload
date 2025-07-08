@@ -104,25 +104,26 @@ const DownloadPage = () => {
   return (
     <div className={styles.pageContainer}>
       <Ribbon text="Matalija & Borivoje"></Ribbon>
-      {zipCount === 0 && (
+      {zipCount === 0 ? (
         <p className={styles.list}>Nema fajlova za download.</p>
+      ) : (
+        <ul className={styles.list}>
+          {Array.from({ length: zipCount }).map((_, i) => (
+            <li key={i} className={styles.listItem}>
+              <button
+                className={styles.link}
+                onClick={() =>
+                  downloadWithProgress(`/api/download-zip?page=${i + 1}`, i)
+                }
+                disabled={downloadingIndex === i}
+              >
+                <FaGift></FaGift> Download ZIP Part {i + 1} (
+                {zipSizes[i]?.toFixed(1) ?? "?"} MB)
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
-      <ul className={styles.list}>
-        {Array.from({ length: zipCount }).map((_, i) => (
-          <li key={i} className={styles.listItem}>
-            <button
-              className={styles.link}
-              onClick={() =>
-                downloadWithProgress(`/api/download-zip?page=${i + 1}`, i)
-              }
-              disabled={downloadingIndex === i}
-            >
-              <FaGift></FaGift> Download ZIP Part {i + 1} (
-              {zipSizes[i]?.toFixed(1) ?? "?"} MB)
-            </button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };
