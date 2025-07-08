@@ -54,7 +54,6 @@ const DownloadPage = () => {
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
-         
           toast.dismiss(loadingToastId);
           toast.success("Download zavrsen uspijesno.");
           break;
@@ -102,12 +101,12 @@ const DownloadPage = () => {
 
   if (loading) return <Spinner></Spinner>;
 
-  if (zipCount === 0) return <p>Nema fajlova za download.</p>;
-
   return (
     <div className={styles.pageContainer}>
       <Ribbon text="Matalija & Borivoje"></Ribbon>
-
+      {zipCount === 0 && (
+        <p className={styles.list}>Nema fajlova za download.</p>
+      )}
       <ul className={styles.list}>
         {Array.from({ length: zipCount }).map((_, i) => (
           <li key={i} className={styles.listItem}>
