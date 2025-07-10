@@ -1,50 +1,173 @@
 npm run dev -- --hostname 0.0.0.0
 
+# PROBLEM ANDROID LOSING REFERENCO OF FILE WITH FILE PICKER
 
-// COMPRES EACH FILE BEFORE UPLOADING
-  const handleBeforeUpload_v1 = async (files) => {
-    const compressedFiles = await Promise.all(
-      files.map(async (file) => {
-        try {
-          //FIRST MAKY COPY OF ORGINAL TO PREVENT CRASHES ON ANDROID
-          const fileCopy = new File([file], file.name, { type: file.type });
+# -------------------------------------------------------------------------------------------
 
-          const sizeInMB = fileCopy.size / 1024 / 1024;
+# ERROR:
 
-          if (sizeInMB === 0) {
-            toast.error("Odabrani fajl je nevažeći ili prazan.");
-            console.warn("Skipping empty file:", file.name);
-            return null;
-          }
+NotReadableError ON browser-image-compression library
 
-          //DONT COMPRESS
-          if (sizeInMB < 2) return fileCopy;
+UploadThingError: UPLOAD_FAILED with ERR_UPLOAD_FILE_CHANGED:
+The ERR_UPLOAD_FILE_CHANGED error occurs when the browser detects that the file being uploaded (via an HTTP PUT request to UploadThing) has changed since it was selected
 
-          //POKUSAJ KOMPRESIJU KLIJENT SIDE
-          const compressedFile = await imageCompression(fileCopy, {
-            maxSizeMB: 4, // Aim below 4MB but keep quality decent
-            maxWidthOrHeight: 3250, //
-            useWebWorker: true, // Improves performance
-            initialQuality: 0.9,
-          });
+Temporary File URIs: On Android, when you select files via the browser's file input (likely used in your UploadDrop component), the file picker often returns a temporary content:// URI rather than a direct file path. This URI may become invalid if the browser or OS revokes access during processing
 
-          return compressedFile;
-        } catch (error) {
-          //AKO COMPRESIJA OMANE NISTA NASTAV DA SALJES
-          // ORGINALNI FAJL(fileCopy) ALI SAMO AKO JE MANJI OD 10MB
-          console.error(`Error compressing file ${fileCopy.name}:`, error);
+1 solutuion:
 
-          if (fileCopy.size > 10 * 1024 * 1024) {
-            toast.error(`${fileCopy.name} je prevelik ili pokušajte ponovo.`);
-            return null; // Return null to filter this file out
-          }
+//FIRST MAKY COPY OF ORGINAL TO PREVENT CRASHES ON ANDROID
 
-          return fileCopy;
+1st approach (Shallow copy):
+
+```javascript
+const fileCopy = new File([file], file.name, { type: file.type });
+```
+
+code bellow is It includes aggressive file stabilization by creating a new File object from an ArrayBuffer.
+
+2 solution:Second code (deep copy with metadata), Uses modern file.arrayBuffer() API
+
+```javascript
+const arrayBuffer = await file.arrayBuffer();
+const stableFile = new File([arrayBuffer], file.name, {
+  type: file.type,
+  lastModified: file.lastModified,
+});
+```
+
+try to "lock" the file reference by creating a deep copy of the file earlier in the process.
+
+3.solution: Uses older FileReader API
+
+```javascript
+const arrayBuffer = await new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result); //atach handler kada detektuje load, resolve sa rezultatom
+  reader.onerror = () => reject(new Error(`Failed to read file ${file.name}`)); //atach handler
+  reader.readAsArrayBuffer(file); //citaj file
+
+  const stableFile = new File([arragBuffer], file.name, {
+    type: file.type,
+    lastModified: file.lastModified,
+  });
+});
+```
+
+Why This Helps:Creating a stable file copy immediately reduces the chance of the file reference becoming invalid during compression.
+Using FileReader explicitly may be more reliable than file.arrayBuffer() on some Android browsers.
+
+4. SOLUTION
+
+```javascript
+import { useCallback } from "react";
+//useCallback prima files vraca stablefiles
+const stabilizeFiles = useCallback(
+    async (files) => {
+      const stableFiles = await Promise.all(
+        Array.from(files).map(
+          (file) =>
+            new Promise((resolve, reject) => {
+              console.log(`Stabilizing file: ${file.name}`, {
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                lastModified: file.lastModified,
+              });
+              const reader = new FileReader();
+              reader.onload = () => {
+                const stableFile = new File([reader.result], file.name, {
+                  type: file.type,
+                  lastModified: file.lastModified,
+                });
+                resolve(stableFile);
+              };
+              reader.onerror = () => {
+                console.error(`FileReader error for ${file.name}:`, reader.error);
+                reject(new Error(`Failed to read file ${file.name}: ${reader.error.message}`));
+              };
+              reader.readAsArrayBuffer(file);
+            })
+        )
+      );
+      return stableFiles;
+    },
+    []
+  );
+
+// Wrap handleBeforeUpload to stabilize files first
+const onBeforeUploadBegin = useCallback(
+  async (files) => {
+    try {
+      const stableFiles = await stabilizeFiles(files);
+      return await handleBeforeUpload(stableFiles);
+    } catch (error) {
+      console.error("Error stabilizing files:", error);
+      onUploadError(error);
+      return [];
+    }
+  },
+  [handleBeforeUpload, stabilizeFiles, onUploadError]
+);
+```
+
+const reader = new FileReader();
+FileReader is a browser API that allows web applications to read the contents of files (or Blob objects) asynchronously. It’s part of the File API
+
+readAsArrayBuffer(file): Reads the file as an ArrayBuffer, useful for binary data or creating new File objects
+
+FileReader uses an event-driven model. You attach handlers to process the results or handle errors:
+
+Since FileReader is event-based, it’s often wrapped in a Promise for modern async/await usage,
+
+# -----------------------------------------------------------------------------------------------------
+
+// COMPRES EACH FILE BEFORE UPLOADING asynhronly
+
+```javascript
+const handleBeforeUpload_v1 = async (files) => {
+  const compressedFiles = await Promise.all(
+    files.map(async (file) => {
+      try {
+        //FIRST MAKY COPY OF ORGINAL TO PREVENT CRASHES ON ANDROID
+        const fileCopy = new File([file], file.name, { type: file.type });
+
+        const sizeInMB = fileCopy.size / 1024 / 1024;
+
+        if (sizeInMB === 0) {
+          toast.error("Odabrani fajl je nevažeći ili prazan.");
+          console.warn("Skipping empty file:", file.name);
+          return null;
         }
-      })
-    );
-    return compressedFiles.filter(Boolean);
-  };
+
+        //DONT COMPRESS
+        if (sizeInMB < 2) return fileCopy;
+
+        //POKUSAJ KOMPRESIJU KLIJENT SIDE
+        const compressedFile = await imageCompression(fileCopy, {
+          maxSizeMB: 4, // Aim below 4MB but keep quality decent
+          maxWidthOrHeight: 3250, //
+          useWebWorker: true, // Improves performance
+          initialQuality: 0.9,
+        });
+
+        return compressedFile;
+      } catch (error) {
+        //AKO COMPRESIJA OMANE NISTA NASTAV DA SALJES
+        // ORGINALNI FAJL(fileCopy) ALI SAMO AKO JE MANJI OD 10MB
+        console.error(`Error compressing file ${fileCopy.name}:`, error);
+
+        if (fileCopy.size > 10 * 1024 * 1024) {
+          toast.error(`${fileCopy.name} je prevelik ili pokušajte ponovo.`);
+          return null; // Return null to filter this file out
+        }
+
+        return fileCopy;
+      }
+    })
+  );
+  return compressedFiles.filter(Boolean);
+};
+```
 
 # DA BI APLIKACIJA RADILA MORA POSTOJATI TOKEN U .env
 
@@ -271,6 +394,7 @@ url:"https://utfs.io/f/1VND70WDq5UAsMgiApNz5fb2yKv817Ehkm0YJ6rnceRFpuiL"
   className={styles.image}
 ></Image>
 ```
+
 // WITH import JSZip from "jszip";
 
 //That means:
@@ -295,7 +419,7 @@ url:"https://utfs.io/f/1VND70WDq5UAsMgiApNz5fb2yKv817Ehkm0YJ6rnceRFpuiL"
 
 //The user waits until everything is ready — there's no download progress until it’s fully built.
 
-/*
+/\*
 Streaming the ZIP (better for large files):
 With streaming, you:
 
@@ -319,11 +443,9 @@ Requires a different ZIP library like archiver (JSZip doesn’t support streamin
 
 Slightly more complex code.
 
+\*/
 
-
-*/
-
-/*
+/\*
 Should you use streaming?
 If your zips are under ~100–150 MB, buffering is perfectly fine.
 
@@ -337,27 +459,27 @@ Or expecting many users to download ZIPs at the same time,
 
 then yes — streaming is the better long-term approach.
 
-*/
-/*
+_/
+/_
 import archiver from "archiver";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
-  const archive = archiver("zip", { zlib: { level: 9 } });
+const archive = archiver("zip", { zlib: { level: 9 } });
 
-  const stream = new ReadableStream({
-    start(controller) {
-      archive.on("data", (chunk) => controller.enqueue(chunk));
-      archive.on("end", () => controller.close());
-      archive.on("error", (err) => controller.error(err));
-    },
-  });
+const stream = new ReadableStream({
+start(controller) {
+archive.on("data", (chunk) => controller.enqueue(chunk));
+archive.on("end", () => controller.close());
+archive.on("error", (err) => controller.error(err));
+},
+});
 
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "application/zip",
-      "Content-Disposition": "attachment; filename=streamed.zip",
-    },
-  });
+return new Response(stream, {
+headers: {
+"Content-Type": "application/zip",
+"Content-Disposition": "attachment; filename=streamed.zip",
+},
+});
 }
-*/
+\*/

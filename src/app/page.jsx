@@ -38,125 +38,208 @@ const UploadPage = () => {
   }, []);
 
   // COMPRES EACH FILE BEFORE UPLOADING
+  // IMPROVED FILE STABILIZATION FOR ANDROID CHROME
   const handleBeforeUpload = async (files) => {
     const processedFiles = [];
 
     for (const file of files) {
-      // Sequential processing
       try {
-        // --- DEBUGGING: Log original file details ---
-        /*
-        console.log(
-          `Processing file: ${file.name}, Type: ${file.type}, Size: ${(
-            file.size /
-            (1024 * 1024)
-          ).toFixed(2)} MB`
-        );
-        */
-        // --- END DEBUGGING ---
-
-        if (file.size === 0) {
+        // Enhanced file validation
+        if (!file || file.size === 0 || !file.type) {
           toast.error("Odabrani fajl je nevažeći ili prazan.");
-          console.warn("Skipping empty file:", file.name);
-          continue; // Skip empty files
+          console.warn("Skipping invalid file:", file.name);
+          continue;
         }
 
-        // Ensure it's an image before attempting compression
+        // Ensure it's an image before processing
         if (!file.type.startsWith("image/")) {
-          console.warn(
-            `Unsupported file type detected, skipping: ${file.name} (${file.type})`
-          );
+          console.warn(`Unsupported file type: ${file.name} (${file.type})`);
           toast.error(
             `"${file.name}" ima nepodržan format i neće biti poslan.`
           );
           continue;
         }
 
-        // --- NEW AGGRESSIVE FILE STABILIZATION ---
-        // Read the file into an ArrayBuffer and create a new File object from it.
-        // This forces the browser to create a fresh in-memory copy,
-        // potentially bypassing underlying file reference issues.
-        const arrayBuffer = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () =>
-            reject(new Error(`Failed to read file ${file.name}`));
-          reader.readAsArrayBuffer(file);
-        });
+        console.log(
+          `Processing: ${file.name}, Size: ${(
+            file.size /
+            (1024 * 1024)
+          ).toFixed(2)} MB`
+        );
 
-        const stableFile = new File([arrayBuffer], file.name, {
-          type: file.type,
-          lastModified: file.lastModified,
-        });
-        // --- END NEW AGGRESSIVE FILE STABILIZATION ---
+        // ENHANCED FILE STABILIZATION - Multiple fallback strategies
+        let stableFile;
 
-        const sizeInMB = stableFile.size / 1024 / 1024; // Use stableFile size
+        try {
+          // Method 1: Modern approach (preferred)
+          if (file.arrayBuffer) {
+            const arrayBuffer = await file.arrayBuffer();
+            stableFile = new File([arrayBuffer], file.name, {
+              type: file.type,
+              lastModified: file.lastModified,
+            });
+          } else {
+            throw new Error("arrayBuffer not supported");
+          }
+        } catch (bufferError) {
+          console.warn(
+            "arrayBuffer method failed, trying FileReader:",
+            bufferError
+          );
 
-        // DONT COMPRESS if already small
-        if (sizeInMB < 2) {
-          processedFiles.push(stableFile); // Push stableFile directly
+          // Method 2: FileReader fallback for older browsers
+          try {
+            const arrayBuffer = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+
+              // Set timeout to prevent hanging
+              const timeout = setTimeout(() => {
+                reader.abort();
+                reject(new Error("FileReader timeout"));
+              }, 30000); // 30 second timeout
+
+              reader.onload = () => {
+                clearTimeout(timeout);
+                resolve(reader.result);
+              };
+
+              reader.onerror = () => {
+                clearTimeout(timeout);
+                reject(
+                  new Error(
+                    `Failed to read file ${file.name}: ${
+                      reader.error?.message || "Unknown error"
+                    }`
+                  )
+                );
+              };
+
+              reader.onabort = () => {
+                clearTimeout(timeout);
+                reject(new Error("FileReader aborted"));
+              };
+
+              reader.readAsArrayBuffer(file);
+            });
+
+            stableFile = new File([arrayBuffer], file.name, {
+              type: file.type,
+              lastModified: file.lastModified,
+            });
+          } catch (readerError) {
+            console.warn(
+              "FileReader method failed, using original file:",
+              readerError
+            );
+            // Method 3: Last resort - use original file with additional delay
+            stableFile = new File([file], file.name, {
+              type: file.type,
+              lastModified: file.lastModified,
+            });
+            // Add extra delay for unstable file references
+            await new Promise((resolve) => setTimeout(resolve, 300));
+          }
+        }
+
+        // Verify the stabilized file
+        if (!stableFile || stableFile.size === 0) {
+          toast.error(`Fajl "${file.name}" nije mogao biti obrađen.`);
           continue;
         }
 
-        // POKUSAJ KOMPRESIJU KLIJENT SIDE
-        // Use the stableFile for compression
-        const compressedFile = await imageCompression(stableFile, {
-          // <-- Use stableFile here
-          maxSizeMB: 4, // Aim below 4MB but keep quality decent
-          maxWidthOrHeight: 4000, //
-          useWebWorker: true, // Improves performance
-          initialQuality: 0.9,
-        });
+        const sizeInMB = stableFile.size / (1024 * 1024);
 
-        // Client-side check against Uploadthing's 10MB limit (from core.js)
+        // Skip compression for small files
+        if (sizeInMB < 2) {
+          processedFiles.push(stableFile);
+          continue;
+        }
+
+        // ENHANCED COMPRESSION with better error handling
+        let compressedFile;
+        const maxRetries = 2;
+
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            // Add delay before compression attempts (especially important for mobile)
+            if (attempt > 0) {
+              await new Promise((resolve) =>
+                setTimeout(resolve, 500 * attempt)
+              );
+            }
+
+            compressedFile = await imageCompression(stableFile, {
+              maxSizeMB: 4,
+              maxWidthOrHeight: 4000,
+              useWebWorker: true,
+              initialQuality: 0.9,
+              // Additional options for better mobile compatibility
+              alwaysKeepResolution: false,
+              exifOrientation: 1, // Handle EXIF orientation issues
+            });
+
+            console.log(
+              `Compressed ${file.name}: ${sizeInMB.toFixed(2)}MB → ${(
+                compressedFile.size /
+                (1024 * 1024)
+              ).toFixed(2)}MB`
+            );
+            break; // Success, exit retry loop
+          } catch (compressionError) {
+            console.warn(
+              `Compression attempt ${attempt + 1} failed for ${file.name}:`,
+              compressionError
+            );
+
+            if (attempt === maxRetries) {
+              // All compression attempts failed
+              console.error(`All compression attempts failed for ${file.name}`);
+
+              // Check if original file is within limits
+              const UPLOADTHING_MAX_SIZE_MB = 10;
+              if (stableFile.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
+                toast.error(
+                  `"${file.name}" je prevelik i kompresija nije uspela.`
+                );
+                continue; // Skip this file
+              }
+
+              // Use original stable file if within limits
+              compressedFile = stableFile;
+              toast.error(
+                `Kompresija za "${file.name}" nije uspela, koristi se originalni fajl.`
+              );
+              break;
+            }
+          }
+        }
+
+        // Final size check
         const UPLOADTHING_MAX_SIZE_MB = 10;
         if (compressedFile.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
           toast.error(
             `"${file.name}" je prevelik (${(
               compressedFile.size /
               (1024 * 1024)
-            ).toFixed(2)} MB) i neće biti poslan.`
+            ).toFixed(2)} MB).`
           );
-          console.warn(
-            `Image "${file.name}" is still too large after compression: ${(
-              compressedFile.size /
-              (1024 * 1024)
-            ).toFixed(2)} MB`
-          );
-          continue; // Skip oversized files
-        }
-
-        console.log(
-          `Compressed image ${file.name} from ${sizeInMB.toFixed(2)} MB to ${(
-            compressedFile.size /
-            (1024 * 1024)
-          ).toFixed(2)} MB`
-        );
-        processedFiles.push(compressedFile);
-      } catch (error) {
-        // If compression fails, try to send the original file if it's within limits.
-        // This is the fallback for when compression itself fails (e.g., ProgressEvent).
-        console.error(`Error compressing file ${file.name}:`, error); // Log original file name
-
-        const UPLOADTHING_MAX_SIZE_MB = 10; // Use the same max size as your core.js
-
-        if (file.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
-          // Check original file size
-          toast.error(
-            `${file.name} je prevelik i nije mogao biti obrađen. Molimo pokušajte ponovo.`
-          );
-          // If original file is too big, filter it out
           continue;
         }
-        processedFiles.push(file); // Push original file if compression failed but it's within limits
+
+        processedFiles.push(compressedFile);
+      } catch (error) {
+        console.error(`Error processing file ${file.name}:`, error);
+        toast.error(
+          `Greška pri obradi fajla "${file.name}". Pokušajte ponovo.`
+        );
+        continue;
       }
     }
 
-    // --- Add a small delay before returning the files array ---
-    // This might give the browser a moment to stabilize its internal file references.
-    await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 100ms
+    // Enhanced delay for mobile stability
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
-    return processedFiles; // No need for .filter(Boolean) with this structure
+    return processedFiles;
   };
 
   //PRESENT USER UPLODADED IMAGES AKO IH JE IMAO
