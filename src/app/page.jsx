@@ -5,12 +5,12 @@ import styles from "./page.module.css";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaTrashAlt } from "react-icons/fa";
-
 import imageCompression from "browser-image-compression";
-import UploadDrop from "@/components/UploadDrop";
+import toast from "react-hot-toast";
 
 import Ribbon from "@/components/Ribbon";
-import toast from "react-hot-toast";
+import UploadDrop from "@/components/UploadDrop";
+import ImageModal from "@/components/ImageModal";
 
 import { useImageCount } from "@/context/ImageCountContext";
 
@@ -20,6 +20,9 @@ const UploadPage = () => {
 
   //UPLOADED IMAGES
   const [images, setImages] = useState([]);
+
+  //FOR MODAL IMAGE
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
   //OPCIONO IME USERA
   const [userName, setUserName] = useState("");
@@ -244,13 +247,7 @@ const UploadPage = () => {
 
   //PRESENT USER UPLODADED IMAGES AKO IH JE IMAO
   const handleOnUploadComplete = (res) => {
-    const newImages = res?.map(({ key, name, ufsUrl }) => {
-      return {
-        key,
-        name,
-        ufsUrl,
-      };
-    });
+    const newImages = res;
 
     //INFORM CONTEXT
     setCount((prev) => prev + newImages.length);
@@ -258,6 +255,7 @@ const UploadPage = () => {
     //ADD TO LOCALSTORAGE
     const updatedImages = [...newImages, ...images];
 
+    //SAVE TO REACT STATE
     setImages(updatedImages);
 
     if (newImages.length > 0) {
@@ -323,12 +321,11 @@ const UploadPage = () => {
                 <Image
                   priority
                   src={item.ufsUrl}
-                  blurDataURL={item.ufsUrl}
-                  placeholder="blur"
                   alt="image"
                   layout="fill"
                   sizes="100%"
                   className={styles.image}
+                  onClick={() => setSelectedIndex(i)}
                 ></Image>
               </div>
             ))}
@@ -350,7 +347,12 @@ const UploadPage = () => {
           </button>
         )}
       </section>
-
+      <ImageModal
+        images={images}
+        currentIndex={selectedIndex}
+        setCurrentIndex={setSelectedIndex}
+        onClose={() => setSelectedIndex(null)}
+      ></ImageModal>
       <form className={styles.uploadForm}>
         <input
           id="userName"

@@ -57,6 +57,8 @@ export default function ImageModal({
 
   const imageInfo = images[currentIndex];
 
+  console.log("imageInfo", imageInfo);
+
   return (
     <div
       className={styles.modalOverlay}
@@ -84,8 +86,6 @@ export default function ImageModal({
           fill
           sizes="80vw"
           className={styles.modalImage}
-          blurDataURL={imageInfo.url}
-          placeholder="blur"
         />
       </div>
     </div>

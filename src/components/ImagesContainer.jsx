@@ -124,8 +124,6 @@ const ImagesContainer = ({ images, checkboxMode }) => {
                 layout="fill"
                 className={styles.image}
                 sizes="100%"
-                blurDataURL={item.url}
-                placeholder="blur"
               />
               {checkboxMode && (
                 <div className={styles.checkboxs}>
