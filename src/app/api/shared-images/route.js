@@ -25,7 +25,7 @@ export async function GET(req) {
     const hasMore = offset + limit < totalCount;
     return NextResponse.json({ files, totalCount, hasMore });
   } catch (error) {
-    console.error("Failed to fetch shared images:", err);
+    console.error("Failed to fetch shared images:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
