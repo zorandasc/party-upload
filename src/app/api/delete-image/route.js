@@ -30,8 +30,9 @@ export async function POST(req) {
       }
     );
     if (!uploadthingRes.ok) {
+      console.log("Failed to delete files from UploadThing");
       return NextResponse.json(
-        { error: "Failed to delete files from UploadThing" },
+        { error: "Greška prilikom brisanja slike iz baze." },
         { status: 500 }
       );
     }
@@ -50,8 +51,9 @@ export async function POST(req) {
     //MOGUCE DA MONGO BRISANJE PUKNE OVDIJE, ALI NIJE STRASNO IMACEMO
     //MONGO OBIJEKAT SA SLOMLJENIM URL
     if (result.deletedCount !== objectIds.length) {
+      console.log("Failed to delete some images from MongoDB");
       return NextResponse.json(
-        { error: "Failed to delete some images from MongoDB" },
+        { error: "Greška prilikom brisanja slike iz baze." },
         { status: 500 }
       );
     }
