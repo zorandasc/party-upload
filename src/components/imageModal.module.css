@@ -18,32 +18,34 @@
 .modalContent {
   position: relative;
   width: 90vw;
-  height: 80vh;
-  max-width: 800px;
+  height: 70vh;
+  max-width: 1200px;
   max-height: 800px;
-  background-color: rgba(255, 255, 255, 0.34); 
+  background-color: rgba(255, 255, 255, 0.65); 
   backdrop-filter: blur(7.1px);
   border-radius: 30px 0px 30px 0;
   padding: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Darker shadow */
   display: flex;
   flex-direction: column; /* Stack imageInfo and image vertically */
-  gap: 10px; /* Space between imageInfo and image */
-  margin-bottom: 4rem;
+  gap: 5px; /* Space between imageInfo and image */
+  margin-bottom: 6rem;
 }
 
 /* Close button: Adjusted for darker theme */
 .closeButton {
   position: absolute;
   top: 35px;
-  right: 30px;
+  right: 25px;
   background: none;
   border: none;
-  color: #141414; /* Light gray for visibility on dark background */
-  font-size: 24px;
+  color: #6c9cc6; /* Light gray for visibility on dark background */
+  font-size: 26px;
   cursor: pointer;
   transition: color 0.2s ease;
   z-index: 100;
+  
+
 }
 
 .closeButton:hover {
@@ -52,8 +54,8 @@
 
 /* Image info: Positioned above the image */
 .imageInfo {
-  background-color: burlywood; /* Darker semi-transparent background */
-  color: whitesmoke; /* White text for contrast */
+  background-color: rgba(255, 255, 255, 0.84); /* Darker semi-transparent background */
+  color: #2e3134; /* White text for contrast */
   padding: 10px 12px;
   border-radius: 30px 0px 30px 0;
   font-size: 14px;
@@ -68,7 +70,9 @@
 /* User text styling */
 .user {
   font-size: 16px;
-  text-shadow: 2px 2px 5px black;
+  /*text-shadow: 1px 1px 1px black;*/
+  font-style: italic;
+  
 }
 
 .user em {
@@ -111,5 +115,64 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+/*FOR DESKTOP BECAUSE OF MIN-WIDTH*/
+@media (min-width: 768px) {
+  .modalContent {
+    width: 90vw; /* Increased width for more image space */
+    max-width: 800px; /* Larger max-width for bigger screens */
+    height: 90vh; /* Taller modal for maximum image height */
+    max-height: 1000px; /* Increased max-height */
+    padding: 20px; /* Reduced padding to give more space to image */
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Reduced gap for more image space */
+  }
+
+  .imageWrapper {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 60px); /* Reduced space for imageInfo */
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modalImage {
+    border-radius: 8px;
+    object-fit: contain; /* Preserve aspect ratio, no distortion */
+    max-width: 100%; /* Fill wrapper width if needed */
+    max-height: 100%; /* Fill wrapper height if needed */
+    width: 100% !important; /* Maximize width within wrapper */
+    height: 100% !important; /* Maximize height within wrapper */
+     /* Optional: subtle shadow */
+  }
+
+  .imageInfo {
+    position: absolute;
+    left: -80px;
+    border: 1px solid #6c9cc6;
+    padding: 10px 15px; /* Reduced padding for compactness */
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.7);
+    align-self: flex-start;
+    width: auto; /* Hug content */
+    max-width: 100%;
+  }
+
+  .user {
+    font-size: 18px;
+  }
+
+  .closeButton {
+    top: 15px; /* Adjusted for reduced padding */
+    right: 15px;
+    font-size: 32px;
+    color: tomato;
   }
 }
