@@ -11,29 +11,21 @@ export default function ImageModal({
   setCurrentIndex,
   onClose,
 }) {
-  //RECORD WHERE TAOUCH START ACRROSS RENDER
   const touchStartX = useRef(null);
 
-  //SAVE FIRST TOUCH
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
-  //RECORD WHER TOUCH ENDS
-  //Positive deltaX → finger moved right → show previous image.
-  //Negative deltaX → finger moved left → show next image.
-  //Threshold (50): Prevents accidental swipes.
-  //User must move their finger at least 50px for it to count as a swipe.
   const handleTouchEnd = (e) => {
     const deltaX = e.changedTouches[0].clientX - touchStartX.current;
     if (deltaX > 50 && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1); // Swipe right → previous
+      setCurrentIndex(currentIndex - 1);
     } else if (deltaX < -50 && currentIndex < images.length - 1) {
-      setCurrentIndex(currentIndex + 1); // Swipe left → next
+      setCurrentIndex(currentIndex + 1);
     }
   };
 
-  //FOR KEYBORD ARROW LEFT/RIGHT
   const handleKeyDown = (e) => {
     if (e.key === "ArrowRight" && currentIndex < images.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -44,20 +36,14 @@ export default function ImageModal({
     }
   };
 
-  //ATTACH KEYBOARD LISTENER
-  //register the listener when the modal is shown:
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [currentIndex]);
 
   if (currentIndex === null || !images[currentIndex]) return null;
 
   const imageInfo = images[currentIndex];
-
-  console.log("imageInfo", imageInfo);
 
   return (
     <div
@@ -65,28 +51,41 @@ export default function ImageModal({
       onClick={onClose}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      role="dialog"
+      aria-labelledby="modal-title"
+      aria-modal="true"
     >
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}>
+        <h2 id="modal-title" className={styles.visuallyHidden}>
+          Image Modal
+        </h2>
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label="Close modal"
+        >
           <FaTimes />
         </button>
-        <div className={styles.imageInfo}>
-          <span className={styles.user}>
-            <i>Od:</i> {imageInfo.userId}
-          </span>
-          <span className={styles.user}>
-            {" "}
-            {new Date(imageInfo.uploadedAt).toLocaleString()}
-          </span>
-        </div>
-        <Image
-          priority
-          src={imageInfo.url}
-          alt="Image"
-          fill
-          sizes="80vw"
-          className={styles.modalImage}
-        />
+        {imageInfo.userId && imageInfo.uploadedAt && (
+          <div className={styles.imageInfo}>
+            <span className={styles.user}>{imageInfo.userId}</span>
+            <span className={styles.user}>
+              {new Date(imageInfo.uploadedAt).toLocaleString()}
+            </span>
+          </div>
+        )}
+        <figure className={styles.imageWrapper}>
+          <Image
+            src={imageInfo.url}
+            alt={`Image uploaded by ${imageInfo.userId} on ${new Date(
+              imageInfo.uploadedAt
+            ).toLocaleString()}`}
+            fill
+            sizes="80vw"
+            //quality={80}
+            className={styles.modalImage}
+          />
+        </figure>
       </div>
     </div>
   );

@@ -121,6 +121,7 @@
     right:-20px;
     color: whitesmoke;
     background-color: burlywood;
+    text-shadow: 2px 2px 5px black;
     border-radius: 50%;
     font-size: 18px;
     padding: 0.2rem 0.4rem;
