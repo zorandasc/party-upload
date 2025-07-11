@@ -6,7 +6,7 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(200, 200, 200, 0.6);
-  padding: 2rem;
+  padding: 1rem;
   width: 100%;
   max-width: 500px;
   text-align: center;
@@ -26,8 +26,12 @@
 
 
 @media (max-width: 600px) {
-  
-
+  .label{
+    display: none;
+  }
+  .uploadIcon{
+     display: none;
+  }
   .uploadDropZone {
     padding: 1rem;
     font-size: 0.9rem;

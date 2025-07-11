@@ -20,6 +20,12 @@ const UploadDrop = ({
       onClientUploadComplete={handleOnUploadComplete}
       input={inputData}
       onUploadError={onUploadError}
+      appearance={{
+        label: styles.label,
+        uploadIcon: styles.uploadIcon,
+        allowedContent: styles.allowedContent,
+        button: styles.uploadButton,
+      }}
     ></UploadDropzone>
   );
 };

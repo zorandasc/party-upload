@@ -9,15 +9,17 @@
 }
 
 .uploadedImagesSmall {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  justify-content: center;
   width: 100%;
   max-width: 1000px;
   margin-top: 1rem;
-  height: 190px;
+  height: 250px;
   overflow: auto;
+  align-items: center;
+  justify-content: center;
 }
 
 
@@ -69,21 +71,6 @@
 }
 
 
-@media (max-width: 600px) {
-  .imagesContainer {
-    width: 100px;
-    height: 100px;
-  }
-
- 
-
-  .uploadForm input {
-    font-size: 0.9rem;
-    padding: 0.5rem 0.75rem;
-  }
-}
-
-
 .clearButton {
   padding: 0.55rem 1rem;
   background-color: #ff5555;
@@ -93,7 +80,10 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease;
-  margin-left: auto
+  margin-left: auto;
+  position: absolute;
+  bottom: 0px;
+  right: 5px;
 }
 
 .clearButton:hover {
@@ -135,4 +125,28 @@
   font-family: 'Times New Roman', serif; /* A classic serif font for the quote mark */
   line-height: 0.8; /* Adjust line height to prevent it from pushing text down */
   z-index: 0; 
+}
+
+
+
+/*FOR MOBILE VIEW*/
+
+@media (max-width: 600px) {
+  .imagesContainer {
+    width: 100px;
+    height: 100px;
+  }
+
+ 
+
+  .uploadForm input {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .uploadedImagesSmall {
+    height: 300px;
+    justify-content:flex-start;
+    align-items: normal;
+  }
 }

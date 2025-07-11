@@ -341,15 +341,16 @@ const UploadPage = () => {
             </p>
           </div>
         )}
+        {images.length > 0 && (
+          <button
+            onClick={handleClearLocalStorage}
+            className={styles.clearButton}
+          >
+            <FaTrashAlt></FaTrashAlt>
+          </button>
+        )}
       </section>
-      {images.length > 0 && (
-        <button
-          onClick={handleClearLocalStorage}
-          className={styles.clearButton}
-        >
-          <FaTrashAlt></FaTrashAlt>
-        </button>
-      )}
+
       <form className={styles.uploadForm}>
         <input
           id="userName"
