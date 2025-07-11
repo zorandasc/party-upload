@@ -81,9 +81,10 @@
   cursor: pointer;
   transition: background 0.3s ease;
   margin-left: auto;
-  position: absolute;
+  position: sticky;
   bottom: 0px;
   right: 5px;
+  max-height: 40px;
 }
 
 .clearButton:hover {

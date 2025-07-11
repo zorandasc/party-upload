@@ -24,6 +24,9 @@
   border-color: #0070f3;
 }
 
+.uploadButton{
+  background-color: #426a8d!important;
+}
 
 @media (max-width: 600px) {
   .label{

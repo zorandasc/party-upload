@@ -26,6 +26,13 @@ const UploadDrop = ({
         allowedContent: styles.allowedContent,
         button: styles.uploadButton,
       }}
+      /*
+      content={{
+        label: "Kliknite ili prevucite slike ovde",
+        button: "Odaberi slike",
+        allowedContent: "Do 4 slike, maksimalno 10MB po slici",
+      }}
+        */
     ></UploadDropzone>
   );
 };
