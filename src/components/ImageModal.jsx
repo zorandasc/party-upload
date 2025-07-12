@@ -59,15 +59,6 @@ export default function ImageModal({
         <h2 id="modal-title" className={styles.visuallyHidden}>
           Image Modal
         </h2>
-
-        {imageInfo.userId && imageInfo.uploadedAt && (
-          <div className={styles.imageInfo}>
-            <span className={styles.user}>{imageInfo.userId}</span>
-            <span className={styles.user}>
-              {new Date(imageInfo.uploadedAt).toLocaleString()}
-            </span>
-          </div>
-        )}
         <figure className={styles.imageWrapper}>
           <Image
             src={imageInfo.url}
@@ -80,6 +71,14 @@ export default function ImageModal({
             className={styles.modalImage}
           />
         </figure>
+        {imageInfo.userId && imageInfo.uploadedAt && (
+          <div className={styles.imageInfo}>
+            <span className={styles.user}>{imageInfo.userId}</span>
+            <span className={styles.user}>
+              {new Date(imageInfo.uploadedAt).toLocaleString()}
+            </span>
+          </div>
+        )}
         <button
           className={styles.closeButton}
           onClick={onClose}
