@@ -30,6 +30,7 @@
   flex-direction: column; /* Stack imageInfo and image vertically */
   gap: 5px; /* Space between imageInfo and image */
   margin-bottom: 6rem;
+  border: 1px solid rgba(255, 255, 255, 0.91);
 }
 
 /* Close button: Adjusted for darker theme */
