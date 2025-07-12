@@ -18,17 +18,17 @@
 .modalContent {
   position: relative;
   width: 90vw;
-  height: 70vh;
+  height: 75vh;
   max-width: 1200px;
   max-height: 800px;
   background-color: rgba(255, 255, 255, 0.35); 
   backdrop-filter: blur(7.1px);
   border-radius: 30px 0px 30px 0;
-  padding: 20px;
+  padding: 30px 20px 20px 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Darker shadow */
   display: flex;
   flex-direction: column; /* Stack imageInfo and image vertically */
-  gap: 5px; /* Space between imageInfo and image */
+  gap: 10px; /* Space between imageInfo and image */
   margin-bottom: 6rem;
 }
 
@@ -58,18 +58,18 @@
   color: #2e3134; /* White text for contrast */
   padding: 10px 12px;
   border-radius: 30px 0px 30px 0;
-  font-size: 14px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   z-index: 10;
   align-self: flex-start; /* Align to the left */
   width: 100%; /* Full width for consistency */
+ /* position: absolute;*/
 }
 
 /* User text styling */
 .user {
-  font-size: 16px;
+  font-size: 14px;
   /*text-shadow: 1px 1px 1px black;*/
   font-style: italic;
   
@@ -83,8 +83,11 @@
 .imageWrapper {
   position: relative;
   width: 100%;
-  height: calc(100% - 60px); /* Adjust height to account for imageInfo */
-  flex-grow: 1; /* Ensure image takes remaining space */
+  /*
+  height: calc(100% - 60px); 
+  flex-grow: 1; 
+  */
+
 }
 
 /* Modal image: Fills the wrapper */
