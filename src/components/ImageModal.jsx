@@ -59,13 +59,7 @@ export default function ImageModal({
         <h2 id="modal-title" className={styles.visuallyHidden}>
           Image Modal
         </h2>
-        <button
-          className={styles.closeButton}
-          onClick={onClose}
-          aria-label="Close modal"
-        >
-          <FaTimes />
-        </button>
+
         {imageInfo.userId && imageInfo.uploadedAt && (
           <div className={styles.imageInfo}>
             <span className={styles.user}>{imageInfo.userId}</span>
@@ -86,6 +80,13 @@ export default function ImageModal({
             className={styles.modalImage}
           />
         </figure>
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label="Close modal"
+        >
+          <FaTimes />
+        </button>
       </div>
     </div>
   );
