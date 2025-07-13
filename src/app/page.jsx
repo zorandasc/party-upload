@@ -252,8 +252,14 @@ const UploadPage = () => {
     //INFORM CONTEXT
     setCount((prev) => prev + newImages.length);
 
+    console.log("userName", userName);
+
+    const updateImages = newImages.map((item) => {
+      return { ...item, userId: userName, uploadedAt: new Date() };
+    });
+
     //ADD TO LOCALSTORAGE
-    const updatedImages = [...newImages, ...images];
+    const updatedImages = [...updateImages, ...images];
 
     //SAVE TO REACT STATE FOR IMIDIATE DISPAY
     setImages(updatedImages);
