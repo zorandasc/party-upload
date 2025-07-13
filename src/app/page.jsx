@@ -255,14 +255,14 @@ const UploadPage = () => {
     //ADD TO LOCALSTORAGE
     const updatedImages = [...newImages, ...images];
 
-    //SAVE TO REACT STATE
+    //SAVE TO REACT STATE FOR IMIDIATE DISPAY
     setImages(updatedImages);
 
     if (newImages.length > 0) {
       toast.success(`Hvala! ${newImages.length} slike su poslane!`);
     }
 
-    // Save to localStorage
+    // Save to localStorage FOR AFTER REFRESH
     localStorage.setItem("uploadedImages", JSON.stringify(updatedImages));
   };
 

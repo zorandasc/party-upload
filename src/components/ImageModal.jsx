@@ -36,13 +36,16 @@ export default function ImageModal({
     }
   };
 
+  //ATACH KEY LISTENER
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [currentIndex]);
 
+  //NEMA IZBARANE SLIKE
   if (currentIndex === null || !images[currentIndex]) return null;
 
+  //IZABRANA SLIKA
   const imageInfo = images[currentIndex];
 
   return (
@@ -61,7 +64,9 @@ export default function ImageModal({
         </h2>
         <figure className={styles.imageWrapper}>
           <Image
-            src={imageInfo.url}
+            //imageInfo.ufsUrl SE KORITI KOD UPLOAD, TO VRACA handleOnUploadComplete
+            //KOD ALLIMAGES, /homepage, VRACA SE imageInfo.url
+            src={imageInfo.ufsUrl ? imageInfo.ufsUrl : imageInfo.url}
             alt={`Image uploaded by ${imageInfo.userId} on ${new Date(
               imageInfo.uploadedAt
             ).toLocaleString()}`}

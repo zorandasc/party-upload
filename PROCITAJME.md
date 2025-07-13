@@ -1,5 +1,22 @@
 npm run dev -- --hostname 0.0.0.0
 
+# ------CLOSURE---------
+
+A closure is when a function captures and "remembers" variables from its outer scope. In React components, this means event handlers and callbacks capture the state values that existed when they were created.
+
+```javascript
+const handleOnUploadComplete = (res) => {
+  // This function captures the value of newImages from when it was defined
+  setNewImages(currentNewImages => {
+    console.log("currentNewImages", currentNewImages);
+    // ... rest of the logic
+  });
+};
+```
+When handleOnUploadComplete is defined, it captures the current value of newImages in its closure. However, if this function is called later (after newImages has changed), it still references the old captured value.
+
+# ------------------
+
 # PROBLEM ANDROID LOSING REFERENCO OF FILE WITH FILE PICKER
 
 # -------------------------------------------------------------------------------------------
@@ -61,38 +78,39 @@ Using FileReader explicitly may be more reliable than file.arrayBuffer() on some
 ```javascript
 import { useCallback } from "react";
 //useCallback prima files vraca stablefiles
-const stabilizeFiles = useCallback(
-    async (files) => {
-      const stableFiles = await Promise.all(
-        Array.from(files).map(
-          (file) =>
-            new Promise((resolve, reject) => {
-              console.log(`Stabilizing file: ${file.name}`, {
-                name: file.name,
-                type: file.type,
-                size: file.size,
-                lastModified: file.lastModified,
-              });
-              const reader = new FileReader();
-              reader.onload = () => {
-                const stableFile = new File([reader.result], file.name, {
-                  type: file.type,
-                  lastModified: file.lastModified,
-                });
-                resolve(stableFile);
-              };
-              reader.onerror = () => {
-                console.error(`FileReader error for ${file.name}:`, reader.error);
-                reject(new Error(`Failed to read file ${file.name}: ${reader.error.message}`));
-              };
-              reader.readAsArrayBuffer(file);
-            })
-        )
-      );
-      return stableFiles;
-    },
-    []
+const stabilizeFiles = useCallback(async (files) => {
+  const stableFiles = await Promise.all(
+    Array.from(files).map(
+      (file) =>
+        new Promise((resolve, reject) => {
+          console.log(`Stabilizing file: ${file.name}`, {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            lastModified: file.lastModified,
+          });
+          const reader = new FileReader();
+          reader.onload = () => {
+            const stableFile = new File([reader.result], file.name, {
+              type: file.type,
+              lastModified: file.lastModified,
+            });
+            resolve(stableFile);
+          };
+          reader.onerror = () => {
+            console.error(`FileReader error for ${file.name}:`, reader.error);
+            reject(
+              new Error(
+                `Failed to read file ${file.name}: ${reader.error.message}`
+              )
+            );
+          };
+          reader.readAsArrayBuffer(file);
+        })
+    )
   );
+  return stableFiles;
+}, []);
 
 // Wrap handleBeforeUpload to stabilize files first
 const onBeforeUploadBegin = useCallback(
@@ -168,212 +186,209 @@ const handleBeforeUpload_v1 = async (files) => {
   return compressedFiles.filter(Boolean);
 };
 ```
+
 # ---------------------------------------------------------
+
 FINAL KODE:
+
 ```javascript
 const handleBeforeUpload = async (files) => {
-    const processedFiles = [];
+  const processedFiles = [];
 
-    for (const file of files) {
+  for (const file of files) {
+    try {
+      // Enhanced file validation
+      if (!file || file.size === 0 || !file.type) {
+        toast.error("Odabrani fajl je nevažeći ili prazan.");
+        console.warn("Skipping invalid file:", file.name);
+        continue;
+      }
+
+      // Ensure it's an image before processing
+      if (!file.type.startsWith("image/")) {
+        console.warn(`Unsupported file type: ${file.name} (${file.type})`);
+        toast.error(`"${file.name}" ima nepodržan format i neće biti poslan.`);
+        continue;
+      }
+
+      console.log(
+        `Processing: ${file.name}, Size: ${(file.size / (1024 * 1024)).toFixed(
+          2
+        )} MB`
+      );
+
+      // ENHANCED FILE STABILIZATION - Multiple fallback strategies
+      let stableFile;
+
       try {
-        // Enhanced file validation
-        if (!file || file.size === 0 || !file.type) {
-          toast.error("Odabrani fajl je nevažeći ili prazan.");
-          console.warn("Skipping invalid file:", file.name);
-          continue;
+        // Method 1: Modern approach (preferred)
+        if (file.arrayBuffer) {
+          const arrayBuffer = await file.arrayBuffer();
+          stableFile = new File([arrayBuffer], file.name, {
+            type: file.type,
+            lastModified: file.lastModified,
+          });
+        } else {
+          throw new Error("arrayBuffer not supported");
         }
-
-        // Ensure it's an image before processing
-        if (!file.type.startsWith("image/")) {
-          console.warn(`Unsupported file type: ${file.name} (${file.type})`);
-          toast.error(
-            `"${file.name}" ima nepodržan format i neće biti poslan.`
-          );
-          continue;
-        }
-
-        console.log(
-          `Processing: ${file.name}, Size: ${(
-            file.size /
-            (1024 * 1024)
-          ).toFixed(2)} MB`
+      } catch (bufferError) {
+        console.warn(
+          "arrayBuffer method failed, trying FileReader:",
+          bufferError
         );
 
-        // ENHANCED FILE STABILIZATION - Multiple fallback strategies
-        let stableFile;
-
+        // Method 2: FileReader fallback for older browsers
         try {
-          // Method 1: Modern approach (preferred)
-          if (file.arrayBuffer) {
-            const arrayBuffer = await file.arrayBuffer();
-            stableFile = new File([arrayBuffer], file.name, {
-              type: file.type,
-              lastModified: file.lastModified,
-            });
-          } else {
-            throw new Error("arrayBuffer not supported");
-          }
-        } catch (bufferError) {
+          const arrayBuffer = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            // Set timeout to prevent hanging
+            const timeout = setTimeout(() => {
+              reader.abort();
+              reject(new Error("FileReader timeout"));
+            }, 30000); // 30 second timeout
+
+            reader.onload = () => {
+              clearTimeout(timeout);
+              resolve(reader.result);
+            };
+
+            reader.onerror = () => {
+              clearTimeout(timeout);
+              reject(
+                new Error(
+                  `Failed to read file ${file.name}: ${
+                    reader.error?.message || "Unknown error"
+                  }`
+                )
+              );
+            };
+
+            reader.onabort = () => {
+              clearTimeout(timeout);
+              reject(new Error("FileReader aborted"));
+            };
+
+            reader.readAsArrayBuffer(file);
+          });
+
+          stableFile = new File([arrayBuffer], file.name, {
+            type: file.type,
+            lastModified: file.lastModified,
+          });
+        } catch (readerError) {
           console.warn(
-            "arrayBuffer method failed, trying FileReader:",
-            bufferError
+            "FileReader method failed, using original file:",
+            readerError
           );
+          // Method 3: Last resort - use original file with additional delay
+          stableFile = new File([file], file.name, {
+            type: file.type,
+            lastModified: file.lastModified,
+          });
+          // Add extra delay for unstable file references
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+      }
 
-          // Method 2: FileReader fallback for older browsers
-          try {
-            const arrayBuffer = await new Promise((resolve, reject) => {
-              const reader = new FileReader();
+      // Verify the stabilized file
+      if (!stableFile || stableFile.size === 0) {
+        toast.error(`Fajl "${file.name}" nije mogao biti obrađen.`);
+        continue;
+      }
 
-              // Set timeout to prevent hanging
-              const timeout = setTimeout(() => {
-                reader.abort();
-                reject(new Error("FileReader timeout"));
-              }, 30000); // 30 second timeout
+      const sizeInMB = stableFile.size / (1024 * 1024);
 
-              reader.onload = () => {
-                clearTimeout(timeout);
-                resolve(reader.result);
-              };
+      // Skip compression for small files
+      if (sizeInMB < 2) {
+        processedFiles.push(stableFile);
+        continue;
+      }
 
-              reader.onerror = () => {
-                clearTimeout(timeout);
-                reject(
-                  new Error(
-                    `Failed to read file ${file.name}: ${
-                      reader.error?.message || "Unknown error"
-                    }`
-                  )
-                );
-              };
+      // ENHANCED COMPRESSION with better error handling
+      let compressedFile;
+      const maxRetries = 2;
 
-              reader.onabort = () => {
-                clearTimeout(timeout);
-                reject(new Error("FileReader aborted"));
-              };
-
-              reader.readAsArrayBuffer(file);
-            });
-
-            stableFile = new File([arrayBuffer], file.name, {
-              type: file.type,
-              lastModified: file.lastModified,
-            });
-          } catch (readerError) {
-            console.warn(
-              "FileReader method failed, using original file:",
-              readerError
-            );
-            // Method 3: Last resort - use original file with additional delay
-            stableFile = new File([file], file.name, {
-              type: file.type,
-              lastModified: file.lastModified,
-            });
-            // Add extra delay for unstable file references
-            await new Promise((resolve) => setTimeout(resolve, 300));
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          // Add delay before compression attempts (especially important for mobile)
+          if (attempt > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
           }
-        }
 
-        // Verify the stabilized file
-        if (!stableFile || stableFile.size === 0) {
-          toast.error(`Fajl "${file.name}" nije mogao biti obrađen.`);
-          continue;
-        }
+          compressedFile = await imageCompression(stableFile, {
+            maxSizeMB: 4,
+            maxWidthOrHeight: 4000,
+            useWebWorker: true,
+            initialQuality: 0.9,
+            // Additional options for better mobile compatibility
+            alwaysKeepResolution: false,
+            exifOrientation: 1, // Handle EXIF orientation issues
+          });
 
-        const sizeInMB = stableFile.size / (1024 * 1024);
-
-        // Skip compression for small files
-        if (sizeInMB < 2) {
-          processedFiles.push(stableFile);
-          continue;
-        }
-
-        // ENHANCED COMPRESSION with better error handling
-        let compressedFile;
-        const maxRetries = 2;
-
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-          try {
-            // Add delay before compression attempts (especially important for mobile)
-            if (attempt > 0) {
-              await new Promise((resolve) =>
-                setTimeout(resolve, 500 * attempt)
-              );
-            }
-
-            compressedFile = await imageCompression(stableFile, {
-              maxSizeMB: 4,
-              maxWidthOrHeight: 4000,
-              useWebWorker: true,
-              initialQuality: 0.9,
-              // Additional options for better mobile compatibility
-              alwaysKeepResolution: false,
-              exifOrientation: 1, // Handle EXIF orientation issues
-            });
-
-            console.log(
-              `Compressed ${file.name}: ${sizeInMB.toFixed(2)}MB → ${(
-                compressedFile.size /
-                (1024 * 1024)
-              ).toFixed(2)}MB`
-            );
-            break; // Success, exit retry loop
-          } catch (compressionError) {
-            console.warn(
-              `Compression attempt ${attempt + 1} failed for ${file.name}:`,
-              compressionError
-            );
-
-            if (attempt === maxRetries) {
-              // All compression attempts failed
-              console.error(`All compression attempts failed for ${file.name}`);
-
-              // Check if original file is within limits
-              const UPLOADTHING_MAX_SIZE_MB = 10;
-              if (stableFile.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
-                toast.error(
-                  `"${file.name}" je prevelik i kompresija nije uspela.`
-                );
-                continue; // Skip this file
-              }
-
-              // Use original stable file if within limits
-              compressedFile = stableFile;
-              toast.error(
-                `Kompresija za "${file.name}" nije uspela, koristi se originalni fajl.`
-              );
-              break;
-            }
-          }
-        }
-
-        // Final size check
-        const UPLOADTHING_MAX_SIZE_MB = 10;
-        if (compressedFile.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
-          toast.error(
-            `"${file.name}" je prevelik (${(
+          console.log(
+            `Compressed ${file.name}: ${sizeInMB.toFixed(2)}MB → ${(
               compressedFile.size /
               (1024 * 1024)
-            ).toFixed(2)} MB).`
+            ).toFixed(2)}MB`
           );
-          continue;
-        }
+          break; // Success, exit retry loop
+        } catch (compressionError) {
+          console.warn(
+            `Compression attempt ${attempt + 1} failed for ${file.name}:`,
+            compressionError
+          );
 
-        processedFiles.push(compressedFile);
-      } catch (error) {
-        console.error(`Error processing file ${file.name}:`, error);
+          if (attempt === maxRetries) {
+            // All compression attempts failed
+            console.error(`All compression attempts failed for ${file.name}`);
+
+            // Check if original file is within limits
+            const UPLOADTHING_MAX_SIZE_MB = 10;
+            if (stableFile.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
+              toast.error(
+                `"${file.name}" je prevelik i kompresija nije uspela.`
+              );
+              continue; // Skip this file
+            }
+
+            // Use original stable file if within limits
+            compressedFile = stableFile;
+            toast.error(
+              `Kompresija za "${file.name}" nije uspela, koristi se originalni fajl.`
+            );
+            break;
+          }
+        }
+      }
+
+      // Final size check
+      const UPLOADTHING_MAX_SIZE_MB = 10;
+      if (compressedFile.size > UPLOADTHING_MAX_SIZE_MB * 1024 * 1024) {
         toast.error(
-          `Greška pri obradi fajla "${file.name}". Pokušajte ponovo.`
+          `"${file.name}" je prevelik (${(
+            compressedFile.size /
+            (1024 * 1024)
+          ).toFixed(2)} MB).`
         );
         continue;
       }
+
+      processedFiles.push(compressedFile);
+    } catch (error) {
+      console.error(`Error processing file ${file.name}:`, error);
+      toast.error(`Greška pri obradi fajla "${file.name}". Pokušajte ponovo.`);
+      continue;
     }
+  }
 
-    // Enhanced delay for mobile stability
-    await new Promise((resolve) => setTimeout(resolve, 200));
+  // Enhanced delay for mobile stability
+  await new Promise((resolve) => setTimeout(resolve, 200));
 
-    return processedFiles;
-  };
+  return processedFiles;
+};
 ```
+
 Key improvements for UploadThing:
 
 Progressive Retry Strategy:
@@ -382,19 +397,16 @@ Attempt 1: Modern arrayBuffer() approach
 Attempt 2: FileReader with timeout
 Attempt 3: Direct file copy with delay
 
-
 Smart Error Handling:
 
 Don't retry for certain error types (non-images, oversized files)
 Progressive delays between attempts
 Specific error messages with user guidance
 
-
 Enhanced Compression:
 
 Multiple compression attempts with fresh file references
 Fallback to original file if compression fails but size is acceptable
-
 
 Better User Feedback:
 
@@ -403,6 +415,7 @@ Guidance on what to do when errors occur
 Clear indication of processing progress
 
 # ---------------------------------------------------------
+
 # DA BI APLIKACIJA RADILA MORA POSTOJATI TOKEN U .env
 
 # UPLOADTHING_TOKEN=
