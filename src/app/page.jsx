@@ -270,6 +270,7 @@ const UploadPage = () => {
 
   //PRESENT USER UPLODADED IMAGES AKO IH JE IMAO
   const handleOnUploadComplete = (res) => {
+    setCheckboxVisible(false);
     const newImages = res;
 
     console.log("FROM handleOnUploadComplet():", res);
@@ -307,6 +308,8 @@ const UploadPage = () => {
   //RESET UPLOADROP AKO SE DOGODILA GRESKA
   const handleUploadError = (error) => {
     console.error("Upload je propao, sa greskom:", error);
+
+    setCheckboxVisible(false);
     setResetKey((prev) => prev + 1); // force reset
 
     // Default message fallback
