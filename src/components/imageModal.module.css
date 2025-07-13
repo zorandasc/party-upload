@@ -55,7 +55,7 @@
 
 /* Image info: Positioned above the image */
 .imageInfo {
-  background-color: burlywood; /* Darker semi-transparent background */
+  background-color: rgba(255, 255, 255, 0.84); /* Darker semi-transparent background */
   color: #2e3134; /* White text for contrast */
   padding: 10px 12px;
   border-radius: 0px 0px 30px 0;
@@ -161,7 +161,7 @@
     
     padding: 10px 15px; /* Reduced padding for compactness */
     font-size: 16px;
-    background-color: burlywood;
+    background-color: rgba(255, 255, 255, 0.7);
     align-self: flex-start;
     width: auto; /* Hug content */
     max-width: 100%;
