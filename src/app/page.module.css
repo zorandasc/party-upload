@@ -16,8 +16,6 @@
   width: 100%;
   max-width: 1000px;
   margin-top: 1rem;
- 
-  overflow: auto;
   align-items: center;
   justify-content: center;
 }
@@ -106,7 +104,7 @@
 }
 
 .quote{
-   font-size: 2em; /* Slightly larger text for readability */
+   font-size: 3em; /* Slightly larger text for readability */
  
   color: #555; /* Slightly lighter grey for paragraph text */
   margin-bottom: 0; /* Remove default bottom margin if not needed */
@@ -132,6 +130,11 @@
 
 /*FOR MOBILE VIEW*/
 @media (max-width: 600px) {
+  .quote{
+   font-size: 2em; 
+ 
+ 
+}
   .imagesContainer {
     width: 100px;
     height: 100px;
@@ -148,5 +151,6 @@
     justify-content:flex-start;
     align-items: normal;
     max-height: 350px;
+    overflow: auto;
   }
 }
