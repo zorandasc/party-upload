@@ -325,8 +325,9 @@ const UploadPage = () => {
 
   // Function to generate random guest username
   const generateGuestUsername = () => {
-    const randomNumber = Math.floor(Math.random() * 10000);
-    return `Gost-${randomNumber}`;
+    const randomNumber = Math.floor(Math.random() * 10); // 0-9 (single digit)
+    const shortTimestamp = Date.now().toString().slice(-6); // last 6 digits
+    return `Gost-${randomNumber}${shortTimestamp}`;
   };
 
   // Get effective username (always use stored/current username)
