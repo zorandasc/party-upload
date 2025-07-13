@@ -269,8 +269,14 @@ const UploadPage = () => {
     const effectiveUserName = getEffectiveUserName();
 
     const updateImages = newImages.map((item) => {
-      return { ...item, userId: effectiveUserName, uploadedAt: new Date() };
+      return {
+        url: item.url,
+        ufsUrl: item.ufsUrl,
+        userId: effectiveUserName,
+        uploadedAt: new Date(),
+      };
     });
+    console.log(updateImages);
 
     //ADD TO LOCALSTORAGE
     const updatedImages = [...updateImages, ...images];
