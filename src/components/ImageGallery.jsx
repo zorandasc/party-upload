@@ -35,7 +35,6 @@ export default function ImageGallery({ filter = {}, sharedOnly = false }) {
         const res = await fetch(`${baseUrl}?${params.toString()}`);
         const data = await res.json();
 
-        console.log("data.files", data.files);
         setImages(data.files);
         setHasMore(data.hasMore);
         setTotalCount(data.totalCount);
