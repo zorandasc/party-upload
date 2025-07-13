@@ -154,3 +154,18 @@
     overflow: auto;
   }
 }
+
+.checkboxs{
+   position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 200;
+      background: transparent;
+      border: none;
+}
+
+.checkboxs input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-left: 0.5rem;
+}

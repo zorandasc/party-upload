@@ -22,6 +22,9 @@ const UploadPage = () => {
   //UPLOADED IMAGES
   const [images, setImages] = useState([]);
 
+  //CHECKBOX FOR DELETITION
+  const [checkboxVisible, setCheckboxVisible] = useState(false);
+
   //FOR MODAL IMAGE
   const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -36,11 +39,13 @@ const UploadPage = () => {
 
   useEffect(() => {
     const storedImages = localStorage.getItem("uploadedImages");
+    //CLOSE TRASH
+    setCheckboxVisible(false);
     if (storedImages) {
       //AKO POSTOJE POSLANE SLIKE
       setImages(JSON.parse(storedImages));
     }
-
+    //DOBAVI USER IZ LOCALSTORAGE AKO PSOTOJI
     const storedUserName = localStorage.getItem("userName");
     if (storedUserName) {
       //AKO USERNMA POSTOJI KORISTI TAJ
@@ -53,8 +58,8 @@ const UploadPage = () => {
     }
   }, []);
 
-  // COMPRES EACH FILE BEFORE UPLOADING
-  // IMPROVED FILE STABILIZATION FOR ANDROID CHROME
+  // FIRST TRY TO IMPROVED FILE STABILIZATION FOR ANDROID CHROME
+  // SECOND TRY TO COMPRES EACH FILE BEFORE UPLOADING
   const handleBeforeUpload = async (files) => {
     const processedFiles = [];
 
@@ -222,7 +227,12 @@ const UploadPage = () => {
 
               // Use original stable file if within limits
               compressedFile = stableFile;
+              /*
               toast.error(
+                `Kompresija za "${file.name}" nije uspela, koristi se originalni fajl.`
+              );
+              */
+              console.log(
                 `Kompresija za "${file.name}" nije uspela, koristi se originalni fajl.`
               );
               break;
@@ -262,6 +272,8 @@ const UploadPage = () => {
   const handleOnUploadComplete = (res) => {
     const newImages = res;
 
+    console.log("FROM handleOnUploadComplet():", res);
+
     //INFORM CONTEXT
     setCount((prev) => prev + newImages.length);
 
@@ -270,13 +282,13 @@ const UploadPage = () => {
 
     const updateImages = newImages.map((item) => {
       return {
+        key: item.key,
         url: item.url,
         ufsUrl: item.ufsUrl,
         userId: effectiveUserName,
         uploadedAt: new Date(),
       };
     });
-    console.log(updateImages);
 
     //ADD TO LOCALSTORAGE
     const updatedImages = [...updateImages, ...images];
@@ -315,18 +327,10 @@ const UploadPage = () => {
     } else if (message.toLowerCase().includes("invalid")) {
       toast.error("Ime mora biti od min 2 do 20 slova.");
     } else if (message.toLowerCase().includes("upload_failed")) {
-      toast.error(
-        "Upload nije uspeo. Pokušajte ponovo ili izaberite druge fajlove."
-      );
+      toast.error("Upload nije uspeo. Molimo Vas pokušajte ponovo.");
     } else {
       toast.error(`${message}. Molim Vas pokusajte ponovo.`);
     }
-  };
-
-  const handleClearLocalStorage = () => {
-    localStorage.removeItem("uploadedImages");
-    setImages([]); // Clear from state too
-    toast.success("Slike su obrisane iz vaše istorije.");
   };
 
   // Function to generate random guest username
@@ -368,6 +372,32 @@ const UploadPage = () => {
     }
   };
 
+  const handleToggleDelete = (e, item) => {
+    e.stopPropagation();
+
+    const isChecked = e.target.checked;
+
+    if (isChecked) {
+      //LOCAL STATE IS SOURCE OF TRUTH FOR APLICATION
+      //AND LOCALSTORAGE
+      const updatedImages = images.filter((img) => img.key !== item.key);
+
+      setImages(updatedImages);
+
+      if (updatedImages.length == 0) {
+        localStorage.removeItem("uploadedImages");
+      } else {
+        localStorage.setItem("uploadedImages", JSON.stringify(updatedImages));
+      }
+
+      toast.success("Slika je obrisana iz vaše istorije!");
+    }
+  };
+
+  const handleTrashButton = () => {
+    setCheckboxVisible(!checkboxVisible);
+  };
+
   return (
     <div className={styles.pageContainer}>
       <Ribbon text="Matalija & Borivoje"></Ribbon>
@@ -376,7 +406,7 @@ const UploadPage = () => {
           <>
             {images?.map((item, i) => (
               // Display each uploaded image
-              <div key={i} className={styles.imagesContainer}>
+              <div key={item.key} className={styles.imagesContainer}>
                 <Image
                   priority
                   src={item.ufsUrl}
@@ -386,6 +416,18 @@ const UploadPage = () => {
                   className={styles.image}
                   onClick={() => setSelectedIndex(i)}
                 ></Image>
+                {checkboxVisible && (
+                  <div className={styles.checkboxs}>
+                    <input
+                      style={{ accentColor: "tomato" }}
+                      type="checkbox"
+                      id={`trash-${item.key}`}
+                      name="trash"
+                      onChange={(e) => handleToggleDelete(e, item)}
+                      onClick={(e) => e.stopPropagation()}
+                    ></input>
+                  </div>
+                )}
               </div>
             ))}
           </>
@@ -398,10 +440,7 @@ const UploadPage = () => {
           </div>
         )}
         {images.length > 0 && (
-          <button
-            onClick={handleClearLocalStorage}
-            className={styles.clearButton}
-          >
+          <button onClick={handleTrashButton} className={styles.clearButton}>
             <FaTrashAlt></FaTrashAlt>
           </button>
         )}

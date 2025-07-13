@@ -61,6 +61,7 @@ export default function RootLayout({ children }) {
                 boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
                 backdropFilter: "blur(8.1px)",
                 padding: "14px",
+                marginTop:'2rem'
               },
             }}
           />
