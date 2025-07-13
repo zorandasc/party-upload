@@ -14,6 +14,7 @@ import UploadDrop from "@/components/UploadDrop";
 import ImageModal from "@/components/ImageModal";
 
 import { useImageCount } from "@/context/ImageCountContext";
+import Spinner from "@/components/Spinner";
 
 const UploadPage = () => {
   //INFORM CONTEXT OF ULOADED IMAGES
@@ -37,14 +38,22 @@ const UploadPage = () => {
   // You can use that trick to reset the dropzone:
   const [resetKey, setResetKey] = useState(0);
 
+  // ADD MOUNTED STATE TO PREVENT HYDRATION MISMATCH
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
-    const storedImages = localStorage.getItem("uploadedImages");
+    // Set mounted to true first to prevent hydration issues
+    setIsMounted(true);
+
     //CLOSE TRASH
     setCheckboxVisible(false);
+
+    const storedImages = localStorage.getItem("uploadedImages");
     if (storedImages) {
       //AKO POSTOJE POSLANE SLIKE
       setImages(JSON.parse(storedImages));
     }
+
     //DOBAVI USER IZ LOCALSTORAGE AKO PSOTOJI
     const storedUserName = localStorage.getItem("userName");
     if (storedUserName) {
@@ -401,6 +410,10 @@ const UploadPage = () => {
     setCheckboxVisible(!checkboxVisible);
   };
 
+  //TRYING TO SOLVE HIDRATATION PROBLEM
+  if (!isMounted) {
+    return <Spinner></Spinner>;
+  }
   return (
     <div className={styles.pageContainer}>
       <Ribbon text="Matalija & Borivoje"></Ribbon>
