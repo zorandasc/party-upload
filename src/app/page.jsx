@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 
 import Ribbon from "@/components/Ribbon";
 import UploadDrop from "@/components/UploadDrop";
+
 import ImageModal from "@/components/ImageModal";
 
 import { useImageCount } from "@/context/ImageCountContext";
@@ -252,8 +253,6 @@ const UploadPage = () => {
     //INFORM CONTEXT
     setCount((prev) => prev + newImages.length);
 
-    console.log("userName", userName);
-
     const updateImages = newImages.map((item) => {
       return { ...item, userId: userName, uploadedAt: new Date() };
     });
@@ -301,12 +300,6 @@ const UploadPage = () => {
     } else {
       toast.error(`${message}. Molim Vas pokusajte ponovo.`);
     }
-  };
-
-  //THIS WILL INCLUDE username TO INPUT for UploadDrop
-  //WHEN UploadDROP SEND REQUEST TO SERVER FFOR customID
-  const inputForUploadthing = {
-    userName: userName || "Gost",
   };
 
   const handleClearLocalStorage = () => {
@@ -374,7 +367,8 @@ const UploadPage = () => {
         resetKey={resetKey}
         handleBeforeUpload={handleBeforeUpload}
         handleOnUploadComplete={handleOnUploadComplete}
-        inputData={inputForUploadthing}
+        //WHEN UploadDROP SEND REQUEST TO SERVER THIS IS FFOR customID
+        inputData={{ userName: userName }}
         onUploadError={handleUploadError}
       ></UploadDrop>
     </div>

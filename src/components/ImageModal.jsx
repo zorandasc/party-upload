@@ -71,7 +71,7 @@ export default function ImageModal({
               imageInfo.uploadedAt
             ).toLocaleString()}`}
             fill
-            sizes="(min-width: 768px) 90vw, 90vw"
+            sizes="90vw"
             //quality={80}
             className={styles.modalImage}
           />

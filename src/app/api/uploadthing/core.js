@@ -18,13 +18,11 @@ export const ourFileRouter = {
     )
     // This code runs on your server before upload
     .middleware(async (ctx) => {
-      //console.log("INSIDE MIDDLEWARE, ctx", ctx);
-      const { /*req,*/ files, input } = ctx;
+      const { /*req, files,*/ input } = ctx;
 
       const userName = input.userName || "Gost";
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      //JA DODADO PRVI PRAMAETAR JE METADADA, DRUGI SU FILES KOJI IDU NA uploadthing.com
       return { userId: userName };
     })
     // This code RUNS ON YOUR SERVER after upload
