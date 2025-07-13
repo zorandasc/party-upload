@@ -37,7 +37,19 @@ const UploadPage = () => {
   useEffect(() => {
     const storedImages = localStorage.getItem("uploadedImages");
     if (storedImages) {
+      //AKO POSTOJE POSLANE SLIKE
       setImages(JSON.parse(storedImages));
+    }
+
+    const storedUserName = localStorage.getItem("userName");
+    if (storedUserName) {
+      //AKO USERNMA POSTOJI KORISTI TAJ
+      setUserName(storedUserName);
+    } else {
+      // Generate random guest username if none stored (first visit)
+      const guestName = generateGuestUsername();
+      //setUserName(guestName);
+      localStorage.setItem("userName", guestName);
     }
   }, []);
 
@@ -253,8 +265,11 @@ const UploadPage = () => {
     //INFORM CONTEXT
     setCount((prev) => prev + newImages.length);
 
+    // Use effective username (current input or generate guest if empty)
+    const effectiveUserName = getEffectiveUserName();
+
     const updateImages = newImages.map((item) => {
-      return { ...item, userId: userName, uploadedAt: new Date() };
+      return { ...item, userId: effectiveUserName, uploadedAt: new Date() };
     });
 
     //ADD TO LOCALSTORAGE
@@ -308,6 +323,44 @@ const UploadPage = () => {
     toast.success("Slike su obrisane iz vaše istorije.");
   };
 
+  // Function to generate random guest username
+  const generateGuestUsername = () => {
+    const randomNumber = Math.floor(Math.random() * 10000);
+    return `Gost-${randomNumber}`;
+  };
+
+  // Get effective username (always use stored/current username)
+  const getEffectiveUserName = () => {
+    return userName.trim() || userName;
+  };
+
+  // Handle username changes
+  const handleUserNameChange = (e) => {
+    const newUserName = e.target.value;
+    setUserName(newUserName);
+  };
+
+  // Handle when user leaves the input field (onBlur)
+  const handleUserNameBlur = () => {
+    // Only check for empty username when user finishes editing (leaves the field)
+    if (userName.trim() === "") {
+      const storedUserName = localStorage.getItem("userName");
+
+      // If the stored username is a guest name (starts with "Gost-"), retain it
+      if (storedUserName && storedUserName.startsWith("Gost-")) {
+        setUserName(storedUserName);
+      } else {
+        // If stored username was custom, generate a new guest name
+        const newGuestName = generateGuestUsername();
+        setUserName(newGuestName);
+        localStorage.setItem("userName", newGuestName);
+      }
+    } else {
+      // Save to localStorage when user finishes editing and field is not empty
+      localStorage.setItem("userName", userName);
+    }
+  };
+
   return (
     <div className={styles.pageContainer}>
       <Ribbon text="Matalija & Borivoje"></Ribbon>
@@ -357,7 +410,8 @@ const UploadPage = () => {
           id="userName"
           placeholder="Vaše ime (Opciono)"
           value={userName}
-          onChange={(e) => setUserName(e.target.value)}
+          onChange={handleUserNameChange}
+          onBlur={handleUserNameBlur}
           minLength="2"
           maxLength="20"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.7)" }}
@@ -368,7 +422,7 @@ const UploadPage = () => {
         handleBeforeUpload={handleBeforeUpload}
         handleOnUploadComplete={handleOnUploadComplete}
         //WHEN UploadDROP SEND REQUEST TO SERVER THIS IS FFOR customID
-        inputData={{ userName: userName }}
+        inputData={{ userName: getEffectiveUserName() }}
         onUploadError={handleUploadError}
       ></UploadDrop>
     </div>
