@@ -62,7 +62,7 @@ const UploadPage = () => {
     } else {
       // Generate random guest username if none stored (first visit)
       const guestName = generateGuestUsername();
-      //setUserName(guestName);
+      setUserName(guestName);
       localStorage.setItem("userName", guestName);
     }
   }, []);
@@ -468,6 +468,7 @@ const UploadPage = () => {
         onClose={() => setSelectedIndex(null)}
       ></ImageModal>
       <form className={styles.uploadForm}>
+        {/*<label htmlFor="userName" className={styles.uploadLabel}>Vaše ime (Ne obavezno)</label>*/}
         <input
           id="userName"
           placeholder="Vaše ime (Opciono)"

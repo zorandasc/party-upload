@@ -41,16 +41,18 @@
 .uploadForm {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items:center;
   gap: 0.5rem;
   width: 100%;
   max-width: 400px;
+  
 }
 
 .uploadLabel {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: rgb(75 85 99);
+ 
 }
 
 .uploadForm input {
@@ -61,6 +63,7 @@
   border: 1px solid #ccc;
   outline: none;
   transition: border 0.2s;
+  color:  #555;
 }
 
 .uploadForm input:focus {
@@ -107,6 +110,7 @@
    font-size: 3em; /* Slightly larger text for readability */
  
   color: #555; /* Slightly lighter grey for paragraph text */
+  margin-top: 2rem;
   margin-bottom: 0; /* Remove default bottom margin if not needed */
   position: relative; /* Needed for positioning the pseudo-element */
   padding-top: 50px; 
@@ -118,7 +122,7 @@
   font-size: 5em; /* Make the quote very large */
   color: #6c9cc6; /* A light grey color for the quote mark, so it's subtle */
   position: absolute; /* Position it relative to the paragraph */
-  top: -8px; /* Adjust as needed to position the quote mark vertically above the text */
+  top: -30px; /* Adjust as needed to position the quote mark vertically above the text */
   left: 50%; /* Center horizontally */
   transform: translateX(-50%); /* Adjust for true centering based on its own width */
   font-family: 'Times New Roman', serif; /* A classic serif font for the quote mark */
@@ -132,8 +136,12 @@
 @media (max-width: 600px) {
   .quote{
    font-size: 2em; 
+    margin-top: 0;
  
- 
+}
+
+.quote::before {
+  top: -8px;
 }
   .imagesContainer {
     width: 100px;
