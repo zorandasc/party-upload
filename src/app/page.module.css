@@ -157,8 +157,9 @@
 
 .checkboxs{
    position: absolute;
-      top: 5px;
-      right: 5px;
+      top: 0px;
+      right: 0px;
+      padding: 20px;
       z-index: 200;
       background: transparent;
       border: none;
