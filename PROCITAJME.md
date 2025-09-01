@@ -1,5 +1,12 @@
 npm run dev -- --hostname 0.0.0.0
 
+# -----PROBLEMI-------
+
+If redirect("/") is called inside a try/catch, Next.js throws a
+special error (NEXT_REDIRECT) to exit the route early — but your
+catch block catches it as if it were a regular error,
+which causes unexpected behavior (e.g., showing the login page instead of redirecting).
+
 # ------CLOSURE---------
 
 A closure is when a function captures and "remembers" variables from its outer scope. In React components, this means event handlers and callbacks capture the state values that existed when they were created.
@@ -7,12 +14,13 @@ A closure is when a function captures and "remembers" variables from its outer s
 ```javascript
 const handleOnUploadComplete = (res) => {
   // This function captures the value of newImages from when it was defined
-  setNewImages(currentNewImages => {
+  setNewImages((currentNewImages) => {
     console.log("currentNewImages", currentNewImages);
     // ... rest of the logic
   });
 };
 ```
+
 When handleOnUploadComplete is defined, it captures the current value of newImages in its closure. However, if this function is called later (after newImages has changed), it still references the old captured value.
 
 # ------------------
@@ -415,6 +423,13 @@ Guidance on what to do when errors occur
 Clear indication of processing progress
 
 # ---------------------------------------------------------
+When you set a cookie with httpOnly: true, the browser automatically includes that cookie in every subsequent request to the same domain. This happens without any JavaScript code on the frontend needing to explicitly add it to the request. It's a security measure that prevents client-side JavaScript from accessing, reading, or manipulating the cookie, which helps mitigate Cross-Site Scripting (XSS) attacks.
+
+However, this automatic inclusion is for the Cookie header, not the Authorization header. The Authorization header is typically used for sending tokens (like Bearer tokens) that are managed by client-side JavaScript (e.g., retrieved from localStorage or session storage and then manually added to fetch or XMLHttpRequest headers).
+
+In your current setup, because the JWT is stored in an httpOnly cookie, the Next.js frontend requests will automatically send the cookie containing the JWT to your backend. Your backend will then need to read the JWT from the Cookie header of the incoming request, rather than the Authorization header.
+
+# ---------------------------------------
 
 # DA BI APLIKACIJA RADILA MORA POSTOJATI TOKEN U .env
 

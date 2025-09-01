@@ -24,20 +24,20 @@
   background-color: rgba(255, 255, 255, 0.35); 
   backdrop-filter: blur(7.1px);
   border-radius: 30px 0px 30px 0;
-  padding: 10px 20px 20px 20px;
+ /* padding: 10px 20px 20px 20px;*/
   box-shadow: 5px 5px 20px rgba(180, 190, 200, 0.7); /* Darker shadow */
   display: flex;
   flex-direction: column; /* Stack imageInfo and image vertically */
   gap: 5px; /* Space between imageInfo and image */
   margin-bottom: 6rem;
-  border: 1px solid rgba(255, 255, 255, 0.91);
+  /*border: 1px solid rgba(255, 255, 255, 0.91);*/
 }
 
 /* Close button: Adjusted for darker theme */
 .closeButton {
   position: absolute;
-  bottom: 35px;
-  right: 25px;
+  bottom: 10px;
+  right: 5px;
   background: none;
   border: none;
   color: #3e3f41; /* Light gray for visibility on dark background */
